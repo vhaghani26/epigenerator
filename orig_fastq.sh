@@ -1,16 +1,10 @@
 #!/bin/bash
 
-# Arguments
-project=Pilot
 #https://bioinformatics.ucdavis.edu/research-computing/documentation/archiving-slims-data/
 
 genome=hg38
 programsPATH=/share/lasallelab/programs
 
-
-
-echo "md5sum check"
-cd ${project}/${SLIMSdir}
 if md5sum -c \@md5Sum.md5
 then
     echo
@@ -22,9 +16,7 @@ fi
 
 echo "Merging lanes"
 
-echo "Moving undetermined files"
-mkdir Other
-mv Undetermined* Other
+
 
 echo "Checking for the right number of unique sample IDs for both R1 and R2"
 countFASTQ(){
