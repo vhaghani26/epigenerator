@@ -1,7 +1,3 @@
-#!/bin/bash
-
-#https://bioinformatics.ucdavis.edu/research-computing/documentation/archiving-slims-data/
-
 genome=hg38
 programsPATH=/share/lasallelab/programs
 
@@ -18,12 +14,7 @@ echo "Merging lanes"
 
 
 
-echo "Checking for the right number of unique sample IDs for both R1 and R2"
-countFASTQ(){
-	awk -F '_' '{print $1}' | \
-	sort -u | \
-	wc -l
-}
+countFASTQ(){awk -F '_' '{print $1}' | sort -u | wc -l }
 export -f countFASTQ
 
 R1=`ls -1 *R1*.gz | countFASTQ`
@@ -67,12 +58,6 @@ mergeLanes(){
 export -f mergeLanes
 cat task_samples.txt | parallel --jobs 6 --verbose --will-cite  mergeLanes
 
-# Concise merging calls but doesn't make it easy for those who don't use GNU parallel
-#parallel --jobs 6 "echo cat {}_*_R1_001.fastq.gz \> {}\_1.fq.gz" ::: `cat task_samples.txt`
-#parallel --jobs 6 "echo cat {}_*_R2_001.fastq.gz \> {}\_2.fq.gz" ::: `cat task_samples.txt`
-#parallel --jobs 6 --verbose "cat {}_"\*"_R1_001.fastq.gz > {}_1.fq.gz" ::: `cat task_samples.txt`
-#parallel --jobs 6 --verbose "cat {}_"\*"_R2_001.fastq.gz > {}_2.fq.gz" ::: `cat task_samples.txt`
-
 echo "Creating directories for CpG_Me"
 mkdir ../../raw_sequences
 mv task_samples.txt ../..
@@ -92,13 +77,3 @@ fi
 
 echo "Submitting $genome alignment command to cluster for ${project}"
 cd ..
-call="sbatch \
---array=1-${pairedReads} \
-${programsPATH}/CpG_Me/Paired-end/CpG_Me_PE_controller.sh \
-${genome}"
-	
-echo ${call}
-eval ${call}
-
-echo "Done"
-exit 0
