@@ -37,6 +37,8 @@ if data_location == 'slims':
     # Confirm proper transfer
     os.system(f"Carrying out MD5 Checksum to ensure that the files have properly transferred")
     os.chdir(f"{SLIMSdir}")    
+        
+    # Add more here #####
     
     # Move undetermined files
     os.system("echo 'Moving undetermined files'")
@@ -170,22 +172,23 @@ if data_location == 'local':
     while ext.lower() != "fq.gz" and ext.lower() != "fastq.gz":
         print("Please specify your sequence extension. Your files should end with either 'fq.gz' or 'fastq.gz'.")
         ext = input("What is your sequence file extension? (fq.gz/fastq.gz) ")
-    
-    print(f_r_delim, ext.lower())
-    
-    # Confirm merges look correct
+
+    # Create separated forward and reverse reads
+    for_vs_rev = {}
     for key, value in files_per_samp.items():
-        if f_r_delim == "R" and ext.lower() == "fq.gz":
-            os.system(f"echo")
-        elif f_r_delim == "R" and ext.lower() == "fastq.gz":
-            print("2")
-        elif f_r_delim == "_" and ext.lower() == "fq.gz":
-            os.system(f"echo {print(*value)}")
-        elif f_r_delim == "_" and ext.lower() == "fastq.gz":
-            print("4")
-        else:
-            print("5")
-            
+        for val in value:
+            if f_r_delim == "R" and ext.lower() == "fq.gz":
+                os.system(f"echo")
+            elif f_r_delim == "R" and ext.lower() == "fastq.gz":
+                print("2")
+            elif f_r_delim == "_" and ext.lower() == "fq.gz":
+                os.system(f"echo {print(*value)}")
+            elif f_r_delim == "_" and ext.lower() == "fastq.gz":
+                print("4")
+            else:
+                print("5")
+
+
 #cat ${i}\_*_R1_001.fastq.gz \> ${i}\_1.fq.gz
 
 # val in value is file path
