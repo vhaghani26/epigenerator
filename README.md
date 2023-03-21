@@ -76,6 +76,10 @@ The `-j` option for `jobs` means how many jobs are able to be run in parallel. W
 
 `CpG_Me` has been rewritten such that this is all you need to run for your job to run from start to finish. If, for some reason, you are disconnected from Epigenerate or your job fails, re-run the above command and it will pick up where it left off. It even deletes possibly corrupted files from where it was cut off to ensure ALL outputs are properly generated. 
 
+## Interpretting Outputs
+
+(expand here)
+
 ## Acknowledgements
 
 This work was largely adapted from Dr. Ben Laufer's original [CpG_Me Program](https://github.com/ben-laufer/CpG_Me).
