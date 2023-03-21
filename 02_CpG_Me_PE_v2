@@ -15,7 +15,6 @@ rule all:
 
 rule trim:
     message: "Trimming samples"
-    conda: "00_software/trim.yaml"
     input:
         r1 = "01_raw_sequences/{sample}_1.fq.gz",
         r2 = "01_raw_sequences/{sample}_2.fq.gz"
@@ -32,7 +31,6 @@ rule trim:
 '''
 rule screen:
     message: "Screening samples for sample origin"
-    conda: "00_software/trim.yaml"
     input:
         conf = "00_software/fastq_screen.conf"
         r1 = "02_trimmed/{sample}_1_val_1.fq.gz",
@@ -42,7 +40,6 @@ rule screen:
     
 rule align:
     message: "Align bisfulite reads"
-    conda: "00_software/trim.yaml"
     input:
         r1 = "02_trimmed/{sample}_1_val_1.fq.gz",
         r2 = "02_trimmed/{sample}_2_val_2.fq.gz"
@@ -51,7 +48,6 @@ rule align:
     
 rule deduplicate:
     message: "Removing PCR duplicates"
-    conda: "00_software/trim.yaml"
     input:
     output:
     shell: "deduplicate_bismark --bam --paired ${BAM}"
