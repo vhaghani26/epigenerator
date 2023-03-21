@@ -1,3 +1,6 @@
 .snakemake/
-raw_sequences/
-
+01_raw_sequences/
+02_trimmed/
+00_std_err_logs/
+00_time_logs/
+task_samples.yaml
