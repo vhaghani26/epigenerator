@@ -139,6 +139,12 @@ if samp_num.lower() == "no" or samp_num.lower() == "n":
     print("An error has occured. Please try entering your project metadata again.")
     sys.exit()  
 
+# Determine genome
+genome = input("Please select the genome you would like to align your files to. (hg19/hg38/mm10/GRCm38) ")
+while genome != "hg38" and genome != "mm10" and genome != "hg19" and genome != "GRCm38":
+    print("You must select hg19, hg38, mm10, or GRCm38. Please try again.")
+    genome = input("What genome are you using? (hg19/hg38/mm10/GRCm38) ")
+
 # Remove task_samples.yaml if it already exists
 isExist = os.path.isfile("task_samples.yaml")
 if isExist:
@@ -154,9 +160,11 @@ original_stdout = sys.stdout
 with open(file, "a") as f:
     sys.stdout = f
     print("---")
+    print(f"genome: {genome}")
     print("samples:")
     for samp in sample_ids:
-        print(f"\t - {samp}")
+        print(f"  - {samp}")
+    
 # Reset standard output
 sys.stdout = original_stdout
 print("task_samples.yaml has been created.")
@@ -177,11 +185,11 @@ del sample_ids
 ## Merge Lanes ##
 #################
 
-# Make raw_sequences directory
+# Make 01_raw_sequences directory
 print("Preparing to merge lanes")
-isExist = os.path.exists("raw_sequences")
+isExist = os.path.exists("01_raw_sequences")
 if not isExist:
-    os.system("mkdir raw_sequences")
+    os.system("mkdir 01_raw_sequences")
 
 # Create separated forward and reverse reads
 print("Parsing forward vs. reverse reads for lanes")
@@ -236,11 +244,8 @@ print("Merging lanes")
 for key, value in for_vs_rev.items():
    for direction, files in value.items():
        if direction == "Forward":
-           os.system(f"cat {' '.join(for_vs_rev[key]['Forward'])} > raw_sequences/{key}_1.fq.gz")
-       elif direction == "Reverse":
-           os.system(f"cat {' '.join(for_vs_rev[key]['Forward'])} > raw_sequences/{key}_1.fq.gz")
-       else:
-           print("Could not merge reads. Please consider renaming your files and try again.")
-           sys.exit()
+           os.system(f"cat {' '.join(for_vs_rev[key]['Forward'])} > 01_raw_sequences/{key}_1.fq.gz")
+       if direction == "Reverse":
+           os.system(f"cat {' '.join(for_vs_rev[key]['Forward'])} > 01_raw_sequences/{key}_1.fq.gz")
            
 print("Done merging lanes!")
