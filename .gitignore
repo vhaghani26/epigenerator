@@ -1,2 +1,3 @@
-task_samples.txt
-Un_DTSA676/
+.snakemake/
+raw_sequences/
+

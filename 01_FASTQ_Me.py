@@ -139,25 +139,27 @@ if samp_num.lower() == "no" or samp_num.lower() == "n":
     print("An error has occured. Please try entering your project metadata again.")
     sys.exit()  
 
-# Remove task_samples.txt if it already exists
-isExist = os.path.isfile("task_samples.txt")
+# Remove task_samples.yaml if it already exists
+isExist = os.path.isfile("task_samples.yaml")
 if isExist:
-    os.system("rm -f task_samples.txt")
+    os.system("rm -f task_samples.yaml")
 
-# Create task_samples.txt 
-print("Creating task_samples.txt, which will contain all unique sample IDs and get used in further analysis.")
-file = "task_samples.txt"
+# Create task_samples.yaml 
+print("Creating task_samples.yaml, which will contain all unique sample IDs and get used in further analysis.")
+file = "task_samples.yaml"
 os.system(f"touch {file}")
 # Saving reference of standard output
 original_stdout = sys.stdout
-# Write sample IDs into task_samples.txt
+# Write sample IDs into task_samples.yaml
 with open(file, "a") as f:
     sys.stdout = f
+    print("---")
+    print("samples:")
     for samp in sample_ids:
-        print(samp)
+        print(f"\t - {samp}")
 # Reset standard output
 sys.stdout = original_stdout
-print("task_samples.txt has been created.")
+print("task_samples.yaml has been created.")
 
 # Restructure dictionary to contain full file paths of files with same sample IDs
 files_per_samp = {}
@@ -225,7 +227,7 @@ for key, value in for_vs_rev.items():
            sys.exit()
 
 proceed = input("Do the above merges look correct? (y/n) ")
-if proper_dir.lower() == "no" or proper_dir.lower() == "n":
+if proceed.lower() == "no" or proceed.lower() == "n":
     print("Please consider renaming your files such that the forward and reverse strands are more clear and try again.")
     sys.exit()
 

@@ -1,0 +1,35 @@
+configfile: "task_samples.yaml"
+
+# Assign wildcard constraints
+#wildcard_constraints:
+#    sample='[a-zA-Z0-9]+'
+
+rule all:
+    input:
+        "dummy.txt"
+
+"""
+rule:
+    message:
+    conda:
+    input:
+    output:
+    log:
+	benchmark: 
+    threads:
+    shell:
+"""
+
+# Trim
+
+# Screen and Align
+
+# Remove PCR Duplicates
+
+# Insert Size Metrics
+
+# Nucleotide Coverage
+
+# Extract Methylation
+
+# Cytosine and QC Reports
