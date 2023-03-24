@@ -42,7 +42,7 @@ rule screen:
     log: "00_std_err_logs/03_screened_{sample}.log"
     benchmark: "00_time_logs/03_screened_{sample}.txt"
     shell: """
-    fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r1} 2< {log}
+    fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r1} 2> {log}
     touch {output.dummy}
     """ 
 
