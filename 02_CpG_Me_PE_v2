@@ -19,25 +19,34 @@ rule trim:
         r1 = "01_raw_sequences/{sample}_1.fq.gz",
         r2 = "01_raw_sequences/{sample}_2.fq.gz"
     output:
-        dummy = "dummy_{sample}.txt"
+        out1 = "02_trimmed/{sample}_1.fq.gz_trimming_report.txt",
+        out2 = "02_trimmed/{sample}_1_val_1_fastqc.html",
+        out3 = "02_trimmed/{sample}_1_val_1_fastqc.zip",
+        out4 = "02_trimmed/{sample}_1_val_1.fq.gz",
+        out5 = "02_trimmed/{sample}_2.fq.gz_trimming_report.txt",
+        out6 = "02_trimmed/{sample}_2_val_2_fastqc.html",
+        out7 = "02_trimmed/{sample}_2_val_2_fastqc.zip",
+        out8 = "02_trimmed/{sample}_2_val_2.fq.gz"
     log: "00_std_err_logs/02_trimmed_{sample}.log"
     benchmark: "00_time_logs/02_trimmed_{sample}.txt"
     threads: 1
-    shell: """
-    trim_galore --paired --cores {threads} --2colour 20 --fastqc --clip_r1 10 --clip_r2 20 --three_prime_clip_r1 10 --three_prime_clip_r2 10 --output_dir 02_trimmed/ {input.r1} {input.r2}
-    touch {output.dummy}
-    """
+    shell: "trim_galore --paired --cores {threads} --2colour 20 --fastqc --clip_r1 10 --clip_r2 20 --three_prime_clip_r1 10 --three_prime_clip_r2 10 --output_dir 02_trimmed/ {input.r1} {input.r2} 2> {log}"
 
-'''
 rule screen:
     message: "Screening samples for sample origin"
     input:
-        conf = "00_software/fastq_screen.conf"
+        conf = "00_software/fastq_screen.conf",
         r1 = "02_trimmed/{sample}_1_val_1.fq.gz",
         r2 = "02_trimmed/{sample}_2_val_2.fq.gz"
-    output:
-    shell: "fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r1}" 
-    
+    output: dummy = "dummy_{sample}.txt"
+    log: "00_std_err_logs/03_screened_{sample}.log"
+    benchmark: "00_time_logs/03_screened_{sample}.txt"
+    shell: """
+    fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r1} 2< {log}
+    touch {output.dummy}
+    """ 
+
+'''    
 rule align:
     message: "Align bisfulite reads"
     input:
