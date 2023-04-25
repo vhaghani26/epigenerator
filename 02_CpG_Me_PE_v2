@@ -11,7 +11,7 @@ wildcard_constraints:
 
 rule all:
     input:         
-        expand("03_screened/{sample}_1_val_1_screen.bisulfite_orientation.png", sample=config["samples"])
+        expand("04_aligned/{sample}_1_val_1_bismark_bt2_pe.bam", sample=config["samples"])
 
 rule make_directories:
     message: "Making directories for data organization"
@@ -19,12 +19,14 @@ rule make_directories:
         directory("00_time_logs/"),
         directory("00_std_err_logs/"),
         directory("02_trimmed/"),
-        directory("03_screened/")
+        directory("03_screened/"),
+        directory("04_aligned/")
     shell: """
     mkdir 00_time_logs
     mkdir 00_std_err_logs
     mkdir 02_trimmed
     mkdir 03_screened
+    mkdir 04_aligned
     """
     
 '''
@@ -64,27 +66,80 @@ rule screen:
     shell: """
     fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r1} > 03_screened/ 2> {log}
     """ 
-
-'''    
+  
 rule align:
-    message: "Align bisfulite reads"
+    message: "Aligning bisfulite reads"
     input:
         r1 = "02_trimmed/{sample}_1_val_1.fq.gz",
         r2 = "02_trimmed/{sample}_2_val_2.fq.gz"
-    output:
-    shell: "bismark -n 1 --genome /share/lasallelab/genomes/{wildcards.genome}/ --multicore 6 -1 {input.r1} -2 {input.r2}"
-    
+    output: 
+        out1 = "04_aligned/{sample}_1_val_1_bismark_bt2_pe.bam",
+        out2 = "04_aligned/{sample}_1_val_1_bismark_bt2_PE_report.txt"
+    log: "00_std_err_logs/04_aligned_{sample}.txt"
+    benchmark: "00_time_logs/04_aligned_{sample}.txt"
+    shell: """
+    bismark -n 1 --genome /share/lasallelab/genomes/{config[genome]}/ --multicore 6 -1 {input.r1} -2 {input.r2}
+    mv *_1_val_1_bismark_bt2_pe.bam 04_aligned/
+    mv *_1_val_1_bismark_bt2_PE_report.txt 04_aligned/
+    """
+
+'''    
 rule deduplicate:
     message: "Removing PCR duplicates"
+    input: "{sample}_1_val_1_bismark_bt2_pe.bam"
+    output: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
+    log:
+    benchmark:
+    shell: "deduplicate_bismark --bam --paired {input}"
+    
+rule sort:
+    message: "Sorting BAM files"
+    input: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
+    output: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam"
+    log:
+    benchmark:
+    shell: "picard SortSam INPUT={input} OUTPUT={output} SORT_ORDER=coordinate
+
+rule size_metrics:
+    message: "Collecting insert size metrics"
+    input: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam"
+    output: 
+        insert = "{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.insert.txt",
+        hist = "{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.histogram.pdf"
+    log:
+    benchmark:
+    shell: "picard CollectInsertSizeMetrics INPUT={input} OUTPUT={output.insert} HISTOGRAM_FILE={output.hist} ASSUME_SORTED=TRUE"
+
+rule nucleotide_coverage:
+    message: "Assessing nucleotide coverage"
+    input: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
+    output:
+    log:
+    benchmark:
+    shell: "bam2nuc --genome_folder /share/lasallelab/genomes/{config[genome]}/ {input}"
+    
+rule extract_methylation:
+    message:
+    input: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
+    output:
+    log:
+    benchmark:
+    shell: "bismark_methylation_extractor -paired-end -gzip -comprehensive -merge_non_CpG -bedGraph -multicore 6 -buffer_size 34G {input}"
+
+
+rule cytosine_reports:
+    message: "Generating genome-wide cytosine reports"
+    input:
+    output: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz"
+    log:
+    benchmark:
+    shell: "coverage2cytosine --output {output} --genome_folder /share/lasallelab/genomes/{config[genome]}/ --gzip --merge_CpG {output}"
+
+rule qc_report:
+    message:
     input:
     output:
-    shell: "deduplicate_bismark --bam --paired ${BAM}"
+    log:
+    benchmark:
+    shell: "bismark2report"
 '''
-
-# Insert Size Metrics
-
-# Nucleotide Coverage
-
-# Extract Methylation
-
-# Cytosine and QC Reports
