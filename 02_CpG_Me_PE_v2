@@ -11,7 +11,7 @@ wildcard_constraints:
 
 rule all:
     input:         
-        expand("04_aligned/{sample}_1_val_1_bismark_bt2_pe.bam", sample=config["samples"])
+        expand("07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.insert.txt", sample=config["samples"])
 
 rule make_directories:
     message: "Making directories for data organization"
@@ -20,13 +20,19 @@ rule make_directories:
         directory("00_std_err_logs/"),
         directory("02_trimmed/"),
         directory("03_screened/"),
-        directory("04_aligned/")
+        directory("04_aligned/"),
+        directory("05_deduplicated/"),
+        directory("06_sorted/"),
+        directory("07_size_metrics/")
     shell: """
     mkdir 00_time_logs
     mkdir 00_std_err_logs
     mkdir 02_trimmed
     mkdir 03_screened
     mkdir 04_aligned
+    mkdir 05_deduplicated
+    mkdir 06_sorted
+    mkdir 07_size_metrics/
     """
     
 '''
@@ -83,33 +89,34 @@ rule align:
     mv *_1_val_1_bismark_bt2_PE_report.txt 04_aligned/
     """
 
-'''    
 rule deduplicate:
     message: "Removing PCR duplicates"
-    input: "{sample}_1_val_1_bismark_bt2_pe.bam"
-    output: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
-    log:
-    benchmark:
-    shell: "deduplicate_bismark --bam --paired {input}"
+    input: "04_aligned/{sample}_1_val_1_bismark_bt2_pe.bam"
+    output: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
+    log: "00_std_err_logs/05_deduplicated_{sample}.txt"
+    benchmark: "00_time_logs/05_deduplicated_{sample}.txt"
+    shell: "deduplicate_bismark --bam --paired {input} > {output}"
     
 rule sort:
     message: "Sorting BAM files"
-    input: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
-    output: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam"
-    log:
-    benchmark:
-    shell: "picard SortSam INPUT={input} OUTPUT={output} SORT_ORDER=coordinate
+    input: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
+    output: "06_sorted/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam"
+    log: "00_std_err_logs/06_sorted_{sample}.txt"
+    benchmark: "00_time_logs/06_sorted_{sample}.txt"
+    shell: "picard SortSam INPUT={input} OUTPUT={output} SORT_ORDER=coordinate"
+
 
 rule size_metrics:
     message: "Collecting insert size metrics"
-    input: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam"
+    input: "06_sorted/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam"
     output: 
-        insert = "{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.insert.txt",
-        hist = "{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.histogram.pdf"
-    log:
-    benchmark:
+        insert = "07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.insert.txt",
+        hist = "07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.histogram.pdf"
+    log: "00_std_err_logs/07_size_metrics_{sample}.txt"
+    benchmark: "00_time_logs/07_size_metrics_{sample}.txt"
     shell: "picard CollectInsertSizeMetrics INPUT={input} OUTPUT={output.insert} HISTOGRAM_FILE={output.hist} ASSUME_SORTED=TRUE"
 
+'''
 rule nucleotide_coverage:
     message: "Assessing nucleotide coverage"
     input: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
