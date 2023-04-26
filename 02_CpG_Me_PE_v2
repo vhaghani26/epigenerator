@@ -13,6 +13,7 @@ rule all:
     input:         
         expand("07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.insert.txt", sample=config["samples"])
 
+'''
 rule make_directories:
     message: "Making directories for data organization"
     output: 
@@ -34,13 +35,13 @@ rule make_directories:
     mkdir 06_sorted
     mkdir 07_size_metrics/
     """
-    
-'''
+
 rule trim:
     message: "Trimming samples"
     input:
         r1 = "01_raw_sequences/{sample}_1.fq.gz",
-        r2 = "01_raw_sequences/{sample}_2.fq.gz"
+        r2 = "01_raw_sequences/{sample}_2.fq.gz",
+        make_dirs = directory("00_time_logs/")
     output:
         out1 = "02_trimmed/{sample}_1.fq.gz_trimming_report.txt",
         out2 = "02_trimmed/{sample}_1_val_1_fastqc.html",
@@ -53,8 +54,9 @@ rule trim:
     log: "00_std_err_logs/02_trimmed_{sample}.log"
     benchmark: "00_time_logs/02_trimmed_{sample}.txt"
     threads: 1
+    resources: # https://snakemake.readthedocs.io/en/stable/executing/cluster.html
+        mem_mb: 10000, # 10 gb memory
     shell: "trim_galore --paired --cores {threads} --2colour 20 --fastqc --clip_r1 10 --clip_r2 20 --three_prime_clip_r1 10 --three_prime_clip_r2 10 --output_dir 02_trimmed/ {input.r1} {input.r2} 2> {log}"
-'''
 
 rule screen:
     message: "Screening samples for sample origin"
@@ -84,46 +86,53 @@ rule align:
     log: "00_std_err_logs/04_aligned_{sample}.txt"
     benchmark: "00_time_logs/04_aligned_{sample}.txt"
     shell: """
-    bismark -n 1 --genome /share/lasallelab/genomes/{config[genome]}/ --multicore 6 -1 {input.r1} -2 {input.r2}
-    mv *_1_val_1_bismark_bt2_pe.bam 04_aligned/
-    mv *_1_val_1_bismark_bt2_PE_report.txt 04_aligned/
+    bismark -n 1 --genome /share/lasallelab/genomes/{config[genome]}/ --multicore 6 -1 {input.r1} -2 {input.r2} 2> {log}
+    mv {wildcards.sample}_1_val_1_bismark_bt2_pe.bam 04_aligned/
+    mv {wildcards.sample}_1_val_1_bismark_bt2_PE_report.txt 04_aligned/
     """
 
 rule deduplicate:
     message: "Removing PCR duplicates"
     input: "04_aligned/{sample}_1_val_1_bismark_bt2_pe.bam"
-    output: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
+    output:
+        "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam",
+        "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplication_report.txt"
     log: "00_std_err_logs/05_deduplicated_{sample}.txt"
     benchmark: "00_time_logs/05_deduplicated_{sample}.txt"
-    shell: "deduplicate_bismark --bam --paired {input} > {output}"
-    
+    shell: """
+    deduplicate_bismark --bam --paired {input} 2> {log}
+    mv {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplicated.bam 05_deduplicated/
+    mv {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplication_report.txt 05_deduplicated/
+    """
+ 
 rule sort:
     message: "Sorting BAM files"
     input: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
     output: "06_sorted/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam"
     log: "00_std_err_logs/06_sorted_{sample}.txt"
     benchmark: "00_time_logs/06_sorted_{sample}.txt"
-    shell: "picard SortSam INPUT={input} OUTPUT={output} SORT_ORDER=coordinate"
+    shell: "picard SortSam INPUT={input} OUTPUT={output} SORT_ORDER=coordinate 2> {log}"
 
+'''
 
 rule size_metrics:
     message: "Collecting insert size metrics"
     input: "06_sorted/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam"
     output: 
-        insert = "07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.insert.txt",
+        ins = "07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.insert.txt",
         hist = "07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.histogram.pdf"
     log: "00_std_err_logs/07_size_metrics_{sample}.txt"
     benchmark: "00_time_logs/07_size_metrics_{sample}.txt"
-    shell: "picard CollectInsertSizeMetrics INPUT={input} OUTPUT={output.insert} HISTOGRAM_FILE={output.hist} ASSUME_SORTED=TRUE"
+    shell: "picard CollectInsertSizeMetrics INPUT={input} OUTPUT={output.ins} HISTOGRAM_FILE={output.hist} ASSUME_SORTED=TRUE 2> {log}"
 
 '''
 rule nucleotide_coverage:
     message: "Assessing nucleotide coverage"
-    input: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
+    input: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
     output:
     log:
     benchmark:
-    shell: "bam2nuc --genome_folder /share/lasallelab/genomes/{config[genome]}/ {input}"
+    shell: "bam2nuc --genome_folder /share/lasallelab/genomes/{config[genome]}/ {input} 2> {log}"
     
 rule extract_methylation:
     message:
@@ -131,7 +140,7 @@ rule extract_methylation:
     output:
     log:
     benchmark:
-    shell: "bismark_methylation_extractor -paired-end -gzip -comprehensive -merge_non_CpG -bedGraph -multicore 6 -buffer_size 34G {input}"
+    shell: "bismark_methylation_extractor -paired-end -gzip -comprehensive -merge_non_CpG -bedGraph -multicore 6 -buffer_size 34G {input} 2> {log}"
 
 
 rule cytosine_reports:
@@ -140,7 +149,7 @@ rule cytosine_reports:
     output: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz"
     log:
     benchmark:
-    shell: "coverage2cytosine --output {output} --genome_folder /share/lasallelab/genomes/{config[genome]}/ --gzip --merge_CpG {output}"
+    shell: "coverage2cytosine --output {output} --genome_folder /share/lasallelab/genomes/{config[genome]}/ --gzip --merge_CpG {output} 2> {log}"
 
 rule qc_report:
     message:
@@ -148,5 +157,5 @@ rule qc_report:
     output:
     log:
     benchmark:
-    shell: "bismark2report"
+    shell: "bismark2report 2> {log}"
 '''
