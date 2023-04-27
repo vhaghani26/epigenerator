@@ -5,7 +5,9 @@
 04_aligned/
 05_deduplicated/
 06_sorted/
+06_nt_coverage/
 07_size_metrics/
+08_cytosine_reports/
 00_std_err_logs/
 00_time_logs/
 task_samples.yaml
