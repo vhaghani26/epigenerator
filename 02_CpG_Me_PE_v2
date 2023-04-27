@@ -11,7 +11,7 @@ wildcard_constraints:
 
 rule all:
     input:         
-        expand("{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz", sample=config["samples"])
+        expand("{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz", sample=config["samples"])
 
 '''
 rule make_directories:
@@ -168,10 +168,13 @@ rule cytosine_reports:
         "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt",
         "{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt",
         "Non_CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz"
-    output: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz"
+    output: 
+        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz"
     log: "00_std_err_logs/08_cytosine_reports_{sample}.txt"
     benchmark: "00_time_logs/08_cytosine_reports_{sample}.txt"
-    shell: "coverage2cytosine --output {output} --genome_folder /share/lasallelab/genomes/{config[genome]}/ --gzip --merge_CpG {output} 2> {log}"
+    shell: """
+    coverage2cytosine --output {output} --genome_folder /share/lasallelab/genomes/{config[genome]}/ --gzip --merge_CpG {output} 2> {log}
+    """
 
 '''    
 rule reorganize:
