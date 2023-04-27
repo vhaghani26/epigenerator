@@ -11,7 +11,7 @@ wildcard_constraints:
 
 rule all:
     input:         
-        expand("07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.insert.txt", sample=config["samples"])
+        expand("{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz", sample=config["samples"])
 
 '''
 rule make_directories:
@@ -24,7 +24,10 @@ rule make_directories:
         directory("04_aligned/"),
         directory("05_deduplicated/"),
         directory("06_sorted/"),
-        directory("07_size_metrics/")
+        directory("06_nt_coverage/"),
+        directory("06_methylation/"),
+        directory("07_size_metrics/"),
+        directory("08_cytosine_reports")
     shell: """
     mkdir 00_time_logs
     mkdir 00_std_err_logs
@@ -33,7 +36,10 @@ rule make_directories:
     mkdir 04_aligned
     mkdir 05_deduplicated
     mkdir 06_sorted
-    mkdir 07_size_metrics/
+    mkdir 06_nt_coverage
+    mkdir 06_methylation
+    mkdir 07_size_metrics
+    mkdir 08_cytosine_reports
     """
 
 rule trim:
@@ -113,8 +119,6 @@ rule sort:
     benchmark: "00_time_logs/06_sorted_{sample}.txt"
     shell: "picard SortSam INPUT={input} OUTPUT={output} SORT_ORDER=coordinate 2> {log}"
 
-'''
-
 rule size_metrics:
     message: "Collecting insert size metrics"
     input: "06_sorted/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam"
@@ -125,31 +129,86 @@ rule size_metrics:
     benchmark: "00_time_logs/07_size_metrics_{sample}.txt"
     shell: "picard CollectInsertSizeMetrics INPUT={input} OUTPUT={output.ins} HISTOGRAM_FILE={output.hist} ASSUME_SORTED=TRUE 2> {log}"
 
-'''
 rule nucleotide_coverage:
     message: "Assessing nucleotide coverage"
     input: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
-    output:
-    log:
-    benchmark:
-    shell: "bam2nuc --genome_folder /share/lasallelab/genomes/{config[genome]}/ {input} 2> {log}"
-    
+    output: "06_nt_coverage/{sample}_1_val_1_bismark_bt2_pe.deduplicated.nucleotide_stats.txt"
+    log: "00_std_err_logs/06_nt_coverage_{sample}.txt"
+    benchmark: "00_time_logs/06_nt_coverage_{sample}.txt"
+    shell: """
+    bam2nuc --genome_folder /share/lasallelab/genomes/{config[genome]}/ {input} > {output} 2> {log}
+    touch dummy_{wildcards.sample}.txt
+    """
+  
 rule extract_methylation:
-    message:
-    input: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
-    output:
-    log:
-    benchmark:
+    message: "Extracting methylation"
+    input: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
+    output: 
+        "CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz",
+        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz",
+        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz",
+        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R1.png",
+        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R2.png",
+        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt",
+        "{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt",
+        "Non_CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz"
+    log: "00_std_err_logs/06_methylation_{sample}.txt"
+    benchmark: "00_time_logs/06_methylation_{sample}.txt"
     shell: "bismark_methylation_extractor -paired-end -gzip -comprehensive -merge_non_CpG -bedGraph -multicore 6 -buffer_size 34G {input} 2> {log}"
-
+'''  
 
 rule cytosine_reports:
     message: "Generating genome-wide cytosine reports"
     input:
+        "CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz",
+        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz",
+        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz",
+        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R1.png",
+        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R2.png",
+        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt",
+        "{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt",
+        "Non_CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz"
     output: "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz"
-    log:
-    benchmark:
+    log: "00_std_err_logs/08_cytosine_reports_{sample}.txt"
+    benchmark: "00_time_logs/08_cytosine_reports_{sample}.txt"
     shell: "coverage2cytosine --output {output} --genome_folder /share/lasallelab/genomes/{config[genome]}/ --gzip --merge_CpG {output} 2> {log}"
+
+'''    
+rule reorganize:
+    message: "Organizing outputs..."
+    input:
+        in1 = "CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz",
+        in2 = "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz",
+        in3 = "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz",
+        in4 = "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R1.png",
+        in5 = "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R2.png",
+        in6 = "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt",
+        in7 = "{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt",
+        in8 = "Non_CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz",
+        in9 = "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz"
+    output:
+        out1 = "06_methylation/CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz",
+        out2 = "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz",
+        out3 = "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz",
+        out4 = "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R1.png",
+        out5 = "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R2.png",
+        out6 = "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt",
+        out7 = "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt",
+        out8 = "06_methylation/Non_CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz"
+        out9 = "08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz"
+    log: "00_std_err_logs/00_reorganize_{sample}.txt"
+    benchmark: "00_time_logs/00_reorganize_{sample}.txt"
+    shell: """
+    mv {input.in1} {output.out1}
+    mv {input.in2} {output.out2}
+    mv {input.in3} {output.out3}
+    mv {input.in4} {output.out4}
+    mv {input.in5} {output.out5}
+    mv {input.in6} {output.out6}
+    mv {input.in7} {output.out7}
+    mv {input.in8} {output.out8}
+    mv {input.in9} {output.out9}
+    """
 
 rule qc_report:
     message:
