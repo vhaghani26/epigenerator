@@ -11,9 +11,40 @@ wildcard_constraints:
 
 rule all:
     input:         
-        expand("{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz", sample=config["samples"])
+        expand("08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz", sample=config["samples"])
 
 '''
+# Need to add dirs
+rule all:
+    input:
+        expand("{sample}_1.fq.gz_trimming_report.txt", sample=config["samples"]),
+        expand("{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam", sample=config["samples"]),
+        expand("{sample}_1_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz", sample=config["samples"]),
+        expand("{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz", sample=config["samples"]),
+        expand("{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.merged_CpG_evidence.cov.gz", sample=config["samples"]),
+        expand("{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz", sample=config["samples"]),
+        expand("{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.cytosine_context_summary.txt", sample=config["samples"]),
+        expand("{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt", sample=config["samples"]),
+        expand("{sample}_1_val_1_bismark_bt2_pe.deduplicated.nucleotide_stats.txt", sample=config["samples"]),
+        expand("{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.histogram.pdf", sample=config["samples"]),
+        expand("{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.insert.txt", sample=config["samples"]),
+        expand("{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt", sample=config["samples"]),
+        expand("{sample}_1_val_1_bismark_bt2_pe.deduplication_report.txt", sample=config["samples"]),
+        expand("{sample}_1_val_1_bismark_bt2_PE_report.html", sample=config["samples"]),
+        expand("{sample}_1_val_1_bismark_bt2_PE_report.txt", sample=config["samples"]),
+        expand("{sample}_1_val_1_fastqc.html", sample=config["samples"]),
+        expand("{sample}_1_val_1_fastqc.zip", sample=config["samples"]),
+        expand("{sample}_1_val_1_screen.html", sample=config["samples"]),
+        expand("{sample}_1_val_1_screen.txt", sample=config["samples"]),
+        expand("{sample}_2.fq.gz_trimming_report.txt", sample=config["samples"]),
+        expand("{sample}_2_val_2_fastqc.html", sample=config["samples"]),
+        expand("{sample}_2_val_2_fastqc.zip", sample=config["samples"]),
+        expand("{sample}_2_val_2_screen.html", sample=config["samples"]),
+        expand("{sample}_2_val_2_screen.txt", sample=config["samples"]),
+        expand("CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz", sample=config["samples"])
+    
+    
+    
 rule make_directories:
     message: "Making directories for data organization"
     output: 
@@ -139,85 +170,40 @@ rule nucleotide_coverage:
     bam2nuc --genome_folder /share/lasallelab/genomes/{config[genome]}/ {input} > {output} 2> {log}
     touch dummy_{wildcards.sample}.txt
     """
-  
+    
+'''   
 rule extract_methylation:
     message: "Extracting methylation"
     input: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
     output: 
-        "CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz",
-        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz",
-        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz",
-        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R1.png",
-        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R2.png",
-        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt",
-        "{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt",
-        "Non_CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz"
+        "06_methylation/CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz",
+        "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz",
+        "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz",
+        "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R1.png",
+        "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R2.png",
+        "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt",
+        "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt",
+        "06_methylation/Non_CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz"
     log: "00_std_err_logs/06_methylation_{sample}.txt"
     benchmark: "00_time_logs/06_methylation_{sample}.txt"
-    shell: "bismark_methylation_extractor -paired-end -gzip -comprehensive -merge_non_CpG -bedGraph -multicore 6 -buffer_size 34G {input} 2> {log}"
-'''  
+    shell: "bismark_methylation_extractor --paired-end --gzip --comprehensive --merge_non_CpG --bedGraph --multicore 6 --buffer_size 34G {input} --output_dir 06_methylation/ 2> {log}"
 
 rule cytosine_reports:
     message: "Generating genome-wide cytosine reports"
     input:
-        "CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz",
-        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz",
-        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz",
-        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R1.png",
-        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R2.png",
-        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt",
-        "{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt",
-        "Non_CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz"
+        "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz"
     output: 
-        "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz"
+        "08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz"
     log: "00_std_err_logs/08_cytosine_reports_{sample}.txt"
     benchmark: "00_time_logs/08_cytosine_reports_{sample}.txt"
-    shell: """
-    coverage2cytosine --output {output} --genome_folder /share/lasallelab/genomes/{config[genome]}/ --gzip --merge_CpG {output} 2> {log}
-    """
-
-'''    
-rule reorganize:
-    message: "Organizing outputs..."
-    input:
-        in1 = "CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz",
-        in2 = "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz",
-        in3 = "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz",
-        in4 = "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R1.png",
-        in5 = "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R2.png",
-        in6 = "{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt",
-        in7 = "{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt",
-        in8 = "Non_CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz",
-        in9 = "{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz"
-    output:
-        out1 = "06_methylation/CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz",
-        out2 = "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz",
-        out3 = "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz",
-        out4 = "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R1.png",
-        out5 = "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R2.png",
-        out6 = "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt",
-        out7 = "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt",
-        out8 = "06_methylation/Non_CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz"
-        out9 = "08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz"
-    log: "00_std_err_logs/00_reorganize_{sample}.txt"
-    benchmark: "00_time_logs/00_reorganize_{sample}.txt"
-    shell: """
-    mv {input.in1} {output.out1}
-    mv {input.in2} {output.out2}
-    mv {input.in3} {output.out3}
-    mv {input.in4} {output.out4}
-    mv {input.in5} {output.out5}
-    mv {input.in6} {output.out6}
-    mv {input.in7} {output.out7}
-    mv {input.in8} {output.out8}
-    mv {input.in9} {output.out9}
-    """
-
+    shell: "coverage2cytosine --dir 08_cytosine_reports --gzip --merge_CpG {input} --genome_folder /share/lasallelab/genomes/{config[genome]}/ --output {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz 2> {log}"
+    
+'''  
 rule qc_report:
-    message:
+    message: "Generating Bismark QC reports"
     input:
     output:
     log:
     benchmark:
-    shell: "bismark2report 2> {log}"
+    shell: "bismark2report --output {output.out_file} --dir {output.out_dir}2> {log}"
 '''
