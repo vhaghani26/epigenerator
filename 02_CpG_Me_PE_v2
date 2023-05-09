@@ -196,7 +196,7 @@ rule cytosine_reports:
         "08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz"
     log: "00_std_err_logs/08_cytosine_reports_{sample}.txt"
     benchmark: "00_time_logs/08_cytosine_reports_{sample}.txt"
-    shell: "coverage2cytosine --dir 08_cytosine_reports --gzip --merge_CpG {input} --genome_folder /share/lasallelab/genomes/{config[genome]}/ --output {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz 2> {log}"
+    shell: "coverage2cytosine --dir 08_cytosine_reports --gzip --merge_CpG {input} --genome_folder /share/lasallelab/genomes/{config[genome]}/ --output {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz 2> {log}"
     
 '''  
 rule qc_report:
