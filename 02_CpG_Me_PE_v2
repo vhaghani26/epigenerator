@@ -94,6 +94,7 @@ rule trim:
     resources: # https://snakemake.readthedocs.io/en/stable/executing/cluster.html
         mem_mb: 10000, # 10 gb memory
     shell: "trim_galore --paired --cores {threads} --2colour 20 --fastqc --clip_r1 10 --clip_r2 20 --three_prime_clip_r1 10 --three_prime_clip_r2 10 --output_dir 02_trimmed/ {input.r1} {input.r2} 2> {log}"
+'''
 
 rule screen:
     message: "Screening samples for sample origin"
@@ -170,8 +171,7 @@ rule nucleotide_coverage:
     bam2nuc --genome_folder /share/lasallelab/genomes/{config[genome]}/ {input} > {output} 2> {log}
     touch dummy_{wildcards.sample}.txt
     """
-    
-'''   
+
 rule extract_methylation:
     message: "Extracting methylation"
     input: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
@@ -205,5 +205,5 @@ rule qc_report:
     output:
     log:
     benchmark:
-    shell: "bismark2report --output {output.out_file} --dir {output.out_dir}2> {log}"
+    shell: "bismark2report --output {output.out_file} --dir {output.out_dir} 2> {log}"
 '''
