@@ -11,11 +11,15 @@ if proper_dir.lower() == "no" or proper_dir.lower() == "n":
     print("Please make your project directory using 'mkdir project_name' and enter it using 'cd project_name' and then try again.")
     sys.exit()
 
+print("\n")
+
 # Store project directory
 project_dir = os.getcwd()
 
 # Determine if data is maintained locally or on SLIMS
 data_location = input("Is your data maintained on SLIMS or locally downloaded? (slims/local) ")
+
+print("\n")
 
 # Set location variable 
 data_location = data_location.lower()
@@ -87,6 +91,8 @@ if data_location == 'local':
 
 if data_location != 'slims' and data_location != 'local':
     print("Please try again with either 'slims' or 'local'.")
+
+print("\n")
     
 ######################
 ## Identify Samples ##
@@ -99,8 +105,12 @@ while f_r_delim != "R" and f_r_delim != "_":
     print("Please specify the system using either R for the R1/R2 system or _ for the _1/_2 system.")
     f_r_delim = input("Does your data separate forward and reverse reads using the R1/R2 system or _1/_2 system? (R/_) ")
 
+print("\n")
+
 # Determine delimiter for sample IDs
 samp_id_delim = input("In most cases, your sample ID will be followed (i.e. delimited by) an underscore. Is this true for your data? If you are unsure, the answer is likely yes. (y/n) ")
+
+print("\n")
 
 if samp_id_delim.lower() == "no" or samp_id_delim.lower() == "n":
     samp_id_delim = input("What is your delimiter (i.e. what character separates your sample ID from the rest of the file name)? ")
@@ -109,6 +119,7 @@ else:
 
 # Add all data files to list
 print("Checking for the right number of unique sample IDs for the forward and reverse reads")
+
 raw_files = {}
 for path, subdirs, files in os.walk(data_dir):
     for name in files:
@@ -130,20 +141,53 @@ if samp_num.lower() == "no" or samp_num.lower() == "n":
     print("An error has occured. Please try entering your project metadata again.")
     sys.exit()
     
+print("\n")
+    
 # Verify that the sample IDs are correct    
 for samp in sample_ids:
     print(samp)
+
+print("\n")
 
 samp_names = input("Please check the sample IDs above. Are they correct? (y/n) ")
 if samp_num.lower() == "no" or samp_num.lower() == "n":
     print("An error has occured. Please try entering your project metadata again.")
     sys.exit()  
 
+print("\n")
+
+######################
+## Make Config File ##
+######################
+
 # Determine genome
 genome = input("Please select the genome you would like to align your files to. (hg19/hg38/mm10/GRCm38) ")
 while genome != "hg38" and genome != "mm10" and genome != "hg19" and genome != "GRCm38":
     print("You must select hg19, hg38, mm10, or GRCm38. Please try again.")
     genome = input("What genome are you using? (hg19/hg38/mm10/GRCm38) ")
+
+print("\n")
+
+# Incorporate further configuration information
+print("The following questions are going to help create the configuration file to be used and submitted in CpG_Me.")
+
+print("\n")
+
+user = input("What is your username on the Cluster? This can be determined by running 'echo $USER' at the terminal if you are unsure. ")
+
+print("\n")
+
+mail_type = input("When jobs are submitted for CpG_Me, would you like to be notified when a job begins, ends, fails, or all of the above? If you want the least notifications as possible, the best choice would be 'FAIL'. (BEGIN/END/FAIL/ALL) ")
+while mail_type != "BEGIN" and mail_type != "END" and mail_type != "FAIL" and mail_type != "ALL":
+    mail_type = input("Make sure you are using all uppercase letters. Would you like to be notified when a job begins, ends, fails, or all of the above? (BEGIN/END/FAIL/ALL) ")
+
+print("\n")
+    
+mail_user = input("What email would you like to receive notifications at? ")
+
+print("\n")
+
+partition = input("What partition are you using when you submit jobs to SLURM? If you do not know, then use 'production'. ")
 
 # Remove task_samples.yaml if it already exists
 isExist = os.path.isfile("task_samples.yaml")
@@ -160,6 +204,11 @@ original_stdout = sys.stdout
 with open(file, "a") as f:
     sys.stdout = f
     print("---")
+    print(f"user: {user}")
+    print(f"mail_user: {mail_user}")
+    print(f"mail_type: {mail_type}")
+    print(f"partition: {partition}")
+    print(f"sequence_data: {data_dir}")
     print(f"genome: {genome}")
     print("samples:")
     for samp in sample_ids:
