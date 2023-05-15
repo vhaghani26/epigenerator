@@ -11,7 +11,7 @@ wildcard_constraints:
 
 rule all:
     input:         
-        expand("08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz", sample=config["samples"])
+        expand("dummy.txt")
 
 '''
 # Need to add dirs
@@ -42,23 +42,25 @@ rule all:
         expand("{sample}_2_val_2_screen.html", sample=config["samples"]),
         expand("{sample}_2_val_2_screen.txt", sample=config["samples"]),
         expand("CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz", sample=config["samples"])
-    
+'''    
     
     
 rule make_directories:
     message: "Making directories for data organization"
     output: 
-        directory("00_time_logs/"),
-        directory("00_std_err_logs/"),
-        directory("02_trimmed/"),
-        directory("03_screened/"),
-        directory("04_aligned/"),
-        directory("05_deduplicated/"),
-        directory("06_sorted/"),
-        directory("06_nt_coverage/"),
-        directory("06_methylation/"),
-        directory("07_size_metrics/"),
-        directory("08_cytosine_reports")
+        out1 = directory("00_time_logs/"),
+        out2 = directory("00_std_err_logs/"),
+        out3 = directory("02_trimmed/"),
+        out4 = directory("03_screened/"),
+        out5 = directory("04_aligned/"),
+        out6 = directory("05_deduplicated/"),
+        out7 = directory("06_sorted/"),
+        out8 = directory("06_nt_coverage/"),
+        out9 = directory("06_methylation/"),
+        out10 = directory("07_size_metrics/"),
+        out11 = directory("08_cytosine_reports/"),
+        out12 = directory("09_multiqc/"),
+        dum = temp("mkdir_dummy.txt")
     shell: """
     mkdir 00_time_logs
     mkdir 00_std_err_logs
@@ -71,14 +73,17 @@ rule make_directories:
     mkdir 06_methylation
     mkdir 07_size_metrics
     mkdir 08_cytosine_reports
+    mkdir 09_multiqc
+    touch {output.dum}
     """
 
+'''
 rule trim:
     message: "Trimming samples"
     input:
         r1 = "01_raw_sequences/{sample}_1.fq.gz",
         r2 = "01_raw_sequences/{sample}_2.fq.gz",
-        make_dirs = directory("00_time_logs/")
+        dum = "mkdir_dummy.txt"
     output:
         out1 = "02_trimmed/{sample}_1.fq.gz_trimming_report.txt",
         out2 = "02_trimmed/{sample}_1_val_1_fastqc.html",
@@ -193,17 +198,22 @@ rule cytosine_reports:
     input:
         "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz"
     output: 
-        "08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz"
+        protected("08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz")
     log: "00_std_err_logs/08_cytosine_reports_{sample}.txt"
     benchmark: "00_time_logs/08_cytosine_reports_{sample}.txt"
     shell: "coverage2cytosine --dir 08_cytosine_reports --gzip --merge_CpG {input} --genome_folder /share/lasallelab/genomes/{config[genome]}/ --output {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz 2> {log}"
     
-'''  
 rule qc_report:
-    message: "Generating Bismark QC reports"
-    input:
-    output:
-    log:
-    benchmark:
-    shell: "bismark2report --output {output.out_file} --dir {output.out_dir} 2> {log}"
-'''
+    message: "Generating QC reports"
+    input: expand("08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz", sample=config["samples"])
+    output: 
+        out1 = "09_multiqc/multiqc_report.html",
+        out2 = directory("09_multiqc/multiqc_data/")
+    log: "00_std_err_logs/09_multiqc.txt"
+    benchmark: "00_time_logs/09_multiqc.txt"
+    shell: 
+        """
+        multiqc . --ignore raw_sequences --ignore 01_raw_sequences 2> {log}
+        mv multiqc_report.html {output.out1}
+        mv multiqc_data/ {output.out2}
+        """
