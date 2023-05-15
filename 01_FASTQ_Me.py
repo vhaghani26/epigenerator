@@ -295,6 +295,6 @@ for key, value in for_vs_rev.items():
        if direction == "Forward":
            os.system(f"cat {' '.join(for_vs_rev[key]['Forward'])} > 01_raw_sequences/{key}_1.fq.gz")
        if direction == "Reverse":
-           os.system(f"cat {' '.join(for_vs_rev[key]['Reverse'])} > 01_raw_sequences/{key}_1.fq.gz")
+           os.system(f"cat {' '.join(for_vs_rev[key]['Reverse'])} > 01_raw_sequences/{key}_2.fq.gz")
            
 print("Done merging lanes!")
