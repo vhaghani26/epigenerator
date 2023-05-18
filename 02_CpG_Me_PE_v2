@@ -56,6 +56,8 @@ rule all:
         #slurm_partition: {config[partition]},
         #slurm_extra= "--mail_type={config[mail_type]}"
 
+
+'''
 rule make_directories:
     message: "Making directories for data organization"
     output: 
@@ -71,7 +73,6 @@ rule make_directories:
         out10 = directory("07_size_metrics/"),
         out11 = directory("08_cytosine_reports/"),
         out12 = directory("09_multiqc/"),
-        dum = temp("mkdir_dummy.txt")
     shell: """
     mkdir 00_time_logs
     mkdir 00_std_err_logs
@@ -85,15 +86,14 @@ rule make_directories:
     mkdir 07_size_metrics
     mkdir 08_cytosine_reports
     mkdir 09_multiqc
-    touch {output.dum}
     """
+'''
 
 rule trim:
     message: "Trimming samples"
     input:
         r1 = "01_raw_sequences/{sample}_1.fq.gz",
         r2 = "01_raw_sequences/{sample}_2.fq.gz",
-        dum = "mkdir_dummy.txt"
     output:
         out1 = "02_trimmed/{sample}_1.fq.gz_trimming_report.txt",
         out2 = "02_trimmed/{sample}_1_val_1_fastqc.html",
@@ -125,9 +125,13 @@ rule screen:
     #resources:
         #mem_mb: 10000 # 10 GB memory
     shell: """
-    fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r1} > 03_screened/ 2> {log}
-    """ 
-  
+    fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r1} 2> {log}
+    mv {wildcards.sample}_1_val_1_screen.bisulfite_orientation.png 03_screened/
+    mv {wildcards.sample}_1_val_1_screen.html 03_screened/
+    mv {wildcards.sample}_1_val_1_screen.png 03_screened/
+    mv {wildcards.sample}_1_val_1_screen.txt 03_screened/
+    """
+    
 rule align:
     message: "Aligning bisfulite reads"
     input:
