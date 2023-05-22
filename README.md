@@ -111,7 +111,7 @@ For the above reasons, it is HIGHLY recommended that you instead run it via SLUR
 
 ## Interpretting Outputs
 
-The most important outputs you will find are `01_raw_sequences/` and `08_cytosine_reports/`. You can feel free to delete the intermediate files, but they are included for your reference in case something goes wrong when you try to run `CpG_Me`. Below is a description of each of the output directories and what is contained in each. Note that the numbers preceding the directory names are reflective of their order.
+The most important outputs you will find are `01_raw_sequences/` and `08_cytosine_reports/`. You can feel free to delete the intermediate files, but they are included for your reference in case something goes wrong when you try to run `CpG_Me`. The `03_screened` and `09_multiqc` directories may also be good to keep so you can check on the qualities of your samples at various stages. Below is a description of each of the output directories and what is contained in each. Note that the numbers preceding the directory names are reflective of the order they were generated.
 
 ### `00_std_err_logs/`
 
