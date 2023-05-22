@@ -82,7 +82,7 @@ python3 01_FASTQ_Me.py
 
 `CpG_Me` carries out a number of steps to process your sample, which can be seen in the figure below.
 
-![github](https://github.com/vhaghani26/WGBS_workflow/blob/main/CpG_Me_Flowchart.png)
+![Workflow](https://github.com/vhaghani26/WGBS_workflow/blob/main/CpG_Me_Flowchart.png)
 
 There are two ways that you can run `CpG_Me`. 
 
