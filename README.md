@@ -9,7 +9,7 @@ The original [CpG_Me](https://github.com/ben-laufer/CpG_Me), written by Dr. Ben 
 * Users will only interact with command line prompts instead of adapting any of the scripts
 * `CpG_Me` can be run locally as a script instead of through SLURM or piecewise at the command line
 * `CpG_Me` has been rewritten as a snakemake file, yielding the following advantages:
-    * Multi-threading of jobs can be handled locally, increasing the speed at which samples can be processed
+    * Multi-threading of jobs can be handled locally or on SLURM
     * Jobs remove corrupted intermediate files if they fail
     * Snakemake's "memory" prevents re-running of samples and files that have already been generated
 
@@ -42,7 +42,7 @@ rm .git/
 Run the following command in your project directory. It will clone the conda environment with all dependencies needed in order to run the workflow outlined here. This creates an environment called `wgbs`. If you would like to change the name, feel free to do so where the command says `wgbs`. Please note that this may take quite a few minutes to run.
 
 ```
-conda env create -f environment.yml --name wgbs
+conda env create -f 00_software/environment.yml --name wgbs
 ```
 
 Activate your environment using
