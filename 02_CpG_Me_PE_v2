@@ -55,39 +55,6 @@ rule all:
         #slurm_partition: {config[partition]},
         #slurm_extra= "--mail_type={config[mail_type]}"
 
-
-'''
-rule make_directories:
-    message: "Making directories for data organization"
-    output: 
-        out1 = directory("00_time_logs/"),
-        out2 = directory("00_std_err_logs/"),
-        out3 = directory("02_trimmed/"),
-        out4 = directory("03_screened/"),
-        out5 = directory("04_aligned/"),
-        out6 = directory("05_deduplicated/"),
-        out7 = directory("06_sorted/"),
-        out8 = directory("06_nt_coverage/"),
-        out9 = directory("06_methylation/"),
-        out10 = directory("07_size_metrics/"),
-        out11 = directory("08_cytosine_reports/"),
-        out12 = directory("09_multiqc/"),
-    shell: """
-    mkdir 00_time_logs
-    mkdir 00_std_err_logs
-    mkdir 02_trimmed
-    mkdir 03_screened
-    mkdir 04_aligned
-    mkdir 05_deduplicated
-    mkdir 06_sorted
-    mkdir 06_nt_coverage
-    mkdir 06_methylation
-    mkdir 07_size_metrics
-    mkdir 08_cytosine_reports
-    mkdir 09_multiqc
-    """
-'''
-
 rule trim:
     message: "Trimming samples"
     input:
@@ -191,7 +158,7 @@ rule nucleotide_coverage:
     benchmark: "00_time_logs/06_nt_coverage_{sample}.txt"
     #resources:
         #mem_mb: 10000 # 10 GB memory
-    shell: "bam2nuc --genome_folder /share/lasallelab/genomes/{config[genome]}/ {input} > {output} 2> {log}"
+    shell: "bam2nuc --genome_folder /share/lasallelab/genomes/{config[genome]}/ {input} --dir 06_nt_coverage 2> {log}"
 
 rule extract_methylation:
     message: "Extracting methylation"
