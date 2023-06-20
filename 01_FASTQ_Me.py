@@ -195,7 +195,6 @@ if slurm_use.lower() == "yes" or proper_dir.lower() == "y":
 
     # Set up user profile
     print("Determining if SLURM profile is set up...")
-    print("\n")
 
     # Ensure slurm-status.py is present and make it if not
     print("Searching for slurm-status.py...")
@@ -206,57 +205,16 @@ if slurm_use.lower() == "yes" or proper_dir.lower() == "y":
         sys.exit()
     if isExist:
         print("slurm-status.py found")
-        print("\n")
  
     # Ensure config.yaml is present and make it if not
     print("Searching for config.yaml...")
     config_yaml = "~/.config/snakemake/slurm/config.yaml"
     isExist = os.path.isfile(config_yaml)
     if not isExist:
-        conda_prefix = input("What is your conda prefix? It looks something like '/software/anaconda3/4.8.3/lssc0-linux/' or '/home/vhaghani/anaconda3/': ")
-        print("config.yaml not found. To make config.yaml, please do the following:
-        
-        1. Create a file called config.yaml in the directory ~/.config/snakemake/slurm/
-        2. Copy and paste the following into the file and save it (further instructions can be found in the README.md on GitHub):
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-
-        ''')
+        print("config.yaml not found. Please see the GitHub repository for information on how to create this file.")
         sys.exit()
     if isExist:
-        print("slurm-status.py found")   
+        print("config.yaml found")   
         print("\n")
 
 ######################
