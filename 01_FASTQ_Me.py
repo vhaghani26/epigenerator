@@ -202,54 +202,7 @@ if slurm_use.lower() == "yes" or proper_dir.lower() == "y":
     slurm_status = "~/.config/snakemake/slurm/slurm-status.py"
     isExist = os.path.isfile(slurm_status)
     if not isExist:
-        print('''
-        slurm-status.py not found. To make slurm-status.py, please do the following and then try again:
-        
-        1. Create a file called slurm-status.py in the directory ~/.config/snakemake/slurm/
-        2. Copy and paste the following into the file and save it:
-        
-        #!/usr/bin/env python
-        
-        # Example --cluster-status script from docs:
-        # https://snakemake.readthedocs.io/en/stable/tutorial/additional_features.html#using-cluster-status
-        
-        import subprocess
-        import sys
-        
-        jobid = sys.argv[-1]
-        
-        if jobid == "Submitted":
-            sys.stderr.write("smk-simple-slurm: Invalid job ID: %s\n"%(jobid))
-            sys.stderr.write("smk-simple-slurm: Did you remember to add the flag --parsable to your sbatch call?\n")
-            sys.exit(1)
-        
-        output = str(subprocess.check_output("sacct -j %s --format State --noheader | head -1 | awk '{print $1}'" % jobid, shell=True).strip())
-        
-        running_status=["PENDING", "CONFIGURING", "COMPLETING", "RUNNING", "SUSPENDED"]
-        if "COMPLETED" in output:
-            print("success")
-        elif any(r in output for r in running_status):
-            print("running")
-        else:
-            print("failed")
-        
-        
-        """
-        #!/usr/bin/env python3
-        import subprocess
-        import sys
-        jobid = sys.argv[-1]
-        output = str(subprocess.check_output("sacct -j %s --format State --noheader | head -1 | awk '{print $1}'" % jobid, shell=True).strip())
-        running_status=["PENDING", "CONFIGURING", "COMPLETING", "RUNNING", "SUSPENDED", "PREEMPTED"]
-        if "COMPLETED" in output:
-        print("success")
-        elif any(r in output for r in running_status):
-        print("running")
-        else:
-        print("failed")
-        """        
-
-        ''')
+        print("slurm-status.py not found. Please see the GitHub repository for information on how to create this file.")
         sys.exit()
     if isExist:
         print("slurm-status.py found")
@@ -261,45 +214,44 @@ if slurm_use.lower() == "yes" or proper_dir.lower() == "y":
     isExist = os.path.isfile(config_yaml)
     if not isExist:
         conda_prefix = input("What is your conda prefix? It looks something like '/software/anaconda3/4.8.3/lssc0-linux/' or '/home/vhaghani/anaconda3/': ")
-        print(f'''
-        config.yaml not found. To make config.yaml, please do the following:
+        print("config.yaml not found. To make config.yaml, please do the following:
         
         1. Create a file called config.yaml in the directory ~/.config/snakemake/slurm/
-        2. Copy and paste the following into the file and save it:
+        2. Copy and paste the following into the file and save it (further instructions can be found in the README.md on GitHub):
 
-        cluster:
-        mkdir -p logs/{{rule}}/ &&
-        sbatch
-            --cpus-per-task={{threads}}
-            --mem={{resources.mem_mb}}
-            --time={{resources.time}}
-            --job-name=smk-{{rule}}
-            --ntasks={{resources.nodes}}
-            --nodes={{resources.nodes}}
-            --output=logs/{{rule}}/{{jobid}}.out
-            --error=logs/{{rule}}/{{jobid}}.err
-            --partition={{resources.partition}}
-            --parsable
-        default-resources:
-        - mem_mb=2000
-        - time=60
-        - partition=low2
-        - threads=1
-        - nodes=1
-        jobs: 50
-        latency-wait: 60
-        local-cores: 1
-        restart-times: 3
-        max-jobs-per-second: 50
-        max-status-checks-per-second: 20
-        keep-going: True
-        rerun-incomplete: True
-        printshellcmds: True
-        scheduler: greedy
-        use-conda: True
-        conda-prefix: {conda_prefix}
-        conda-frontend: mamba
-        cluster-status: ~/.config/snakemake/slurm/slurm-status.py
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
         ''')
         sys.exit()
