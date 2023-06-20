@@ -86,7 +86,7 @@ python3 01_FASTQ_Me.py
 
 There are two ways that you can run `CpG_Me`. 
 
-**Running `CpG_Me` Locally**
+### Running `CpG_Me` Locally
 
 Since all the information setup was done when you run `FASTQ_Me`, all you have to do now is run the following to run `CpG_Me`:
 
@@ -105,9 +105,98 @@ Notice some issues here.
 
 For the above reasons, it is HIGHLY recommended that you instead run it via SLURM. This is similar to what was initially written by Ben, where individual jobs get submitted to SLURM.
 
-**Running `CpG_Me` on SLURM (Recommended)**
+### Running `CpG_Me` on SLURM (Recommended)
 
 (coming as soon as I figure out how to make this work)
+
+You will need to set up two files in order to run this workflow through slurm.
+
+**1. `slurm-status.py`
+
+In your home directory, create a directory structure that reflects `~/.config/snakemake/slurm/`. Create a file called `slurm-status.py` in this directory and copy and paste the following into the file:
+
+```
+#!/usr/bin/env python
+
+# Example --cluster-status script from docs:
+# https://snakemake.readthedocs.io/en/stable/tutorial/additional_features.html#using-cluster-status
+
+import subprocess
+import sys
+
+jobid = sys.argv[-1]
+
+if jobid == "Submitted":
+    sys.stderr.write("smk-simple-slurm: Invalid job ID: %s\n"%(jobid))
+    sys.stderr.write("smk-simple-slurm: Did you remember to add the flag --parsable to your sbatch call?\n")
+    sys.exit(1)
+
+output = str(subprocess.check_output("sacct -j %s --format State --noheader | head -1 | awk '{print $1}'" % jobid, shell=True).strip())
+
+running_status=["PENDING", "CONFIGURING", "COMPLETING", "RUNNING", "SUSPENDED"]
+if "COMPLETED" in output:
+    print("success")
+elif any(r in output for r in running_status):
+    print("running")
+else:
+    print("failed")
+
+
+"""
+#!/usr/bin/env python3
+import subprocess
+import sys
+jobid = sys.argv[-1]
+output = str(subprocess.check_output("sacct -j %s --format State --noheader | head -1 | awk '{print $1}'" % jobid, shell=True).strip())
+running_status=["PENDING", "CONFIGURING", "COMPLETING", "RUNNING", "SUSPENDED", "PREEMPTED"]
+if "COMPLETED" in output:
+  print("success")
+elif any(r in output for r in running_status):
+  print("running")
+else:
+  print("failed")
+"""
+```
+
+**2. `config.yaml`
+
+In the same directory as `slurm-status.py` (i.e. `~/.config/snakemake/slurm/`), create a file called `config.yaml`. The only thing you will need to change is the `conda_prefix` (the third to last line). It looks something like `/software/anaconda3/4.8.3/lssc0-linux/`, `/home/vhaghani/anaconda3/`, or `/share/lasallelab/programs/.conda/`.
+
+```
+cluster:
+  mkdir -p logs/{rule}/ &&
+  sbatch
+    --cpus-per-task={threads}
+    --mem={resources.mem_mb}
+    --time={resources.time}
+    --job-name=smk-{rule}
+    --ntasks={resources.nodes}
+    --nodes={resources.nodes}
+    --output=logs/{rule}/{jobid}.out
+    --error=logs/{rule}/{jobid}.err
+    --partition={resources.partition}
+    --parsable
+default-resources:
+  - mem_mb=2000
+  - time=60
+  - partition=low2
+  - threads=1
+  - nodes=1
+jobs: 50
+latency-wait: 60
+local-cores: 1
+restart-times: 3
+max-jobs-per-second: 50
+max-status-checks-per-second: 20
+keep-going: True
+rerun-incomplete: True
+printshellcmds: True
+scheduler: greedy
+use-conda: True
+conda-prefix: {conda_prefix}
+conda-frontend: conda
+cluster-status: ~/.config/snakemake/slurm/slurm-status.py
+```
 
 ## Interpretting Outputs
 
