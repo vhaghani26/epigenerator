@@ -94,9 +94,9 @@ if data_location != 'slims' and data_location != 'local':
 
 print("\n")
     
-######################
-## Identify Samples ##
-######################
+#################################
+## Identify Samples and Genome ##
+#################################
 
 # Determine forward vs. reverse read notation  
 f_r_delim = input("Does your data separate forward and reverse reads using the R1/R2 system or _1/_2 system? (R/_) ")
@@ -156,10 +156,6 @@ if samp_num.lower() == "no" or samp_num.lower() == "n":
 
 print("\n")
 
-######################
-## Make Config File ##
-######################
-
 # Determine genome
 genome = input("Please select the genome you would like to align your files to. (hg19/hg38/mm10/GRCm38) ")
 while genome != "hg38" and genome != "mm10" and genome != "hg19" and genome != "GRCm38":
@@ -168,26 +164,152 @@ while genome != "hg38" and genome != "mm10" and genome != "hg19" and genome != "
 
 print("\n")
 
-# Incorporate further configuration information
-print("The following questions are going to help create the configuration file to be used and submitted in CpG_Me.")
+#################
+## SLURM Setup ##
+#################
 
+slurm_use = input("Do you plan to use SLURM when you run CpG_Me? (y/n) ")
 print("\n")
 
-user = input("What is your username on the Cluster? This can be determined by running 'echo $USER' at the terminal if you are unsure. ")
-
-print("\n")
-
-mail_type = input("When jobs are submitted for CpG_Me, would you like to be notified when a job begins, ends, fails, or all of the above? If you want the least notifications as possible, the best choice would be 'FAIL'. (BEGIN/END/FAIL/ALL) ")
-while mail_type != "BEGIN" and mail_type != "END" and mail_type != "FAIL" and mail_type != "ALL":
-    mail_type = input("Make sure you are using all uppercase letters. Would you like to be notified when a job begins, ends, fails, or all of the above? (BEGIN/END/FAIL/ALL) ")
-
-print("\n")
+# User-specific configuration information
+if slurm_use.lower() == "yes" or proper_dir.lower() == "y":
+    # Incorporate SLURM configuration information
+    print("The following questions are going to help create the configuration file to be used and submitted in CpG_Me.")
+    print("\n")
     
-mail_user = input("What email would you like to receive notifications at? ")
+    # SLURM Username
+    user = input("What is your username on the Cluster? This can be determined by running 'echo $USER' at the terminal if you are unsure. ")
+    print("\n")
+    
+    # Mail type
+    mail_type = input("When jobs are submitted for CpG_Me, would you like to be notified when a job begins, ends, fails, or all of the above? If you want the least notifications as possible, the best choice would be 'FAIL'. (BEGIN/END/FAIL/ALL) ")
+    while mail_type != "BEGIN" and mail_type != "END" and mail_type != "FAIL" and mail_type != "ALL":
+        mail_type = input("Make sure you are using all uppercase letters. Would you like to be notified when a job begins, ends, fails, or all of the above? (BEGIN/END/FAIL/ALL) ")
+    print("\n")
+    mail_user = input("What email would you like to receive notifications at? ")
+    print("\n")
+    
+    # Partition
+    partition = input("What partition are you using when you submit jobs to SLURM? If you work in LaSalle Lab at UC Davis, use 'production'. ")
+    print("\n")
 
-print("\n")
+    # Set up user profile
+    print("Determining if SLURM profile is set up...")
+    print("\n")
 
-partition = input("What partition are you using when you submit jobs to SLURM? If you do not know, then use 'production'. ")
+    # Ensure slurm-status.py is present and make it if not
+    print("Searching for slurm-status.py...")
+    slurm_status = "~/.config/snakemake/slurm/slurm-status.py"
+    isExist = os.path.isfile(slurm_status)
+    if not isExist:
+        print('''
+        slurm-status.py not found. To make slurm-status.py, please do the following and then try again:
+        
+        1. Create a file called slurm-status.py in the directory ~/.config/snakemake/slurm/
+        2. Copy and paste the following into the file and save it:
+        
+        #!/usr/bin/env python
+        
+        # Example --cluster-status script from docs:
+        # https://snakemake.readthedocs.io/en/stable/tutorial/additional_features.html#using-cluster-status
+        
+        import subprocess
+        import sys
+        
+        jobid = sys.argv[-1]
+        
+        if jobid == "Submitted":
+            sys.stderr.write("smk-simple-slurm: Invalid job ID: %s\n"%(jobid))
+            sys.stderr.write("smk-simple-slurm: Did you remember to add the flag --parsable to your sbatch call?\n")
+            sys.exit(1)
+        
+        output = str(subprocess.check_output("sacct -j %s --format State --noheader | head -1 | awk '{print $1}'" % jobid, shell=True).strip())
+        
+        running_status=["PENDING", "CONFIGURING", "COMPLETING", "RUNNING", "SUSPENDED"]
+        if "COMPLETED" in output:
+            print("success")
+        elif any(r in output for r in running_status):
+            print("running")
+        else:
+            print("failed")
+        
+        
+        """
+        #!/usr/bin/env python3
+        import subprocess
+        import sys
+        jobid = sys.argv[-1]
+        output = str(subprocess.check_output("sacct -j %s --format State --noheader | head -1 | awk '{print $1}'" % jobid, shell=True).strip())
+        running_status=["PENDING", "CONFIGURING", "COMPLETING", "RUNNING", "SUSPENDED", "PREEMPTED"]
+        if "COMPLETED" in output:
+        print("success")
+        elif any(r in output for r in running_status):
+        print("running")
+        else:
+        print("failed")
+        """        
+
+        ''')
+        sys.exit()
+    if isExist:
+        print("slurm-status.py found")
+        print("\n")
+ 
+    # Ensure config.yaml is present and make it if not
+    print("Searching for config.yaml...")
+    config_yaml = "~/.config/snakemake/slurm/config.yaml"
+    isExist = os.path.isfile(config_yaml)
+    if not isExist:
+        conda_prefix = input("What is your conda prefix? It looks something like '/software/anaconda3/4.8.3/lssc0-linux/' or '/home/vhaghani/anaconda3/': ")
+        print(f'''
+        config.yaml not found. To make config.yaml, please do the following:
+        
+        1. Create a file called config.yaml in the directory ~/.config/snakemake/slurm/
+        2. Copy and paste the following into the file and save it:
+
+        cluster:
+        mkdir -p logs/{{rule}}/ &&
+        sbatch
+            --cpus-per-task={{threads}}
+            --mem={{resources.mem_mb}}
+            --time={{resources.time}}
+            --job-name=smk-{{rule}}
+            --ntasks={{resources.nodes}}
+            --nodes={{resources.nodes}}
+            --output=logs/{{rule}}/{{jobid}}.out
+            --error=logs/{{rule}}/{{jobid}}.err
+            --partition={{resources.partition}}
+            --parsable
+        default-resources:
+        - mem_mb=2000
+        - time=60
+        - partition=low2
+        - threads=1
+        - nodes=1
+        jobs: 50
+        latency-wait: 60
+        local-cores: 1
+        restart-times: 3
+        max-jobs-per-second: 50
+        max-status-checks-per-second: 20
+        keep-going: True
+        rerun-incomplete: True
+        printshellcmds: True
+        scheduler: greedy
+        use-conda: True
+        conda-prefix: {conda_prefix}
+        conda-frontend: mamba
+        cluster-status: ~/.config/snakemake/slurm/slurm-status.py
+
+        ''')
+        sys.exit()
+    if isExist:
+        print("slurm-status.py found")   
+        print("\n")
+
+######################
+## Make Config File ##
+######################
 
 # Remove task_samples.yaml if it already exists
 isExist = os.path.isfile("task_samples.yaml")
@@ -233,6 +355,11 @@ del sample_ids
 #################
 ## Merge Lanes ##
 #################
+
+ready_or_not = input("Are you ready to merge lanes? (y/n) ")
+if ready_or_not.lower() == "no" or proper_dir.lower() == "n":
+    print("Please try again when you're ready.")
+    sys.exit()
 
 # Make 01_raw_sequences directory
 print("Preparing to merge lanes")
