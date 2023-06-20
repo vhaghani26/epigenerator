@@ -83,9 +83,7 @@ rule screen:
         out4 = "03_screened/{sample}_1_val_1_screen.txt"
     log: "00_std_err_logs/03_screened_{sample}.log"
     benchmark: "00_time_logs/03_screened_{sample}.txt"
-    shell: """
-    fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r1} --outdir 03_screened 2> {log}
-    """
+    shell: "fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r1} --outdir 03_screened 2> {log}"
     
 rule align:
     message: "Aligning bisfulite reads"
