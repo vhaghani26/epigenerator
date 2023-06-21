@@ -7,217 +7,217 @@ configfile: "task_samples.yaml"
 
 # Assign wildcard constraints
 wildcard_constraints:
-    sample='[a-zA-Z0-9]+'
-    
+	sample='[a-zA-Z0-9]+'
+	
 rule all:
-    input:
-        # Rule trim
-        expand("02_trimmed/{sample}_1.fq.gz_trimming_report.txt", sample=config["samples"]),
-        expand("02_trimmed/{sample}_1_val_1_fastqc.html", sample=config["samples"]),
-        expand("02_trimmed/{sample}_1_val_1_fastqc.zip", sample=config["samples"]),
-        expand("02_trimmed/{sample}_1_val_1.fq.gz", sample=config["samples"]),
-        expand("02_trimmed/{sample}_2.fq.gz_trimming_report.txt", sample=config["samples"]),
-        expand("02_trimmed/{sample}_2_val_2_fastqc.html", sample=config["samples"]),
-        expand("02_trimmed/{sample}_2_val_2_fastqc.zip", sample=config["samples"]),
-        expand("02_trimmed/{sample}_2_val_2.fq.gz", sample=config["samples"]),
-        # Rule screen
-        expand("03_screened/{sample}_1_val_1_screen.bisulfite_orientation.png", sample=config["samples"]),
-        expand("03_screened/{sample}_1_val_1_screen.html", sample=config["samples"]),
-        expand("03_screened/{sample}_1_val_1_screen.png", sample=config["samples"]),
-        expand("03_screened/{sample}_1_val_1_screen.txt", sample=config["samples"]),
-        # Rule align
-        expand("04_aligned/{sample}_1_val_1_bismark_bt2_pe.bam", sample=config["samples"]),
-        expand("04_aligned/{sample}_1_val_1_bismark_bt2_PE_report.txt", sample=config["samples"]),
-        # Rule deduplicate
-        expand("05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam", sample=config["samples"]),
-        expand("05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplication_report.txt", sample=config["samples"]),
-        # Rule sort
-        expand("06_sorted/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam", sample=config["samples"]),
-        # Rule size_metrics
-        expand("07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.insert.txt", sample=config["samples"]),
-        expand("07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.histogram.pdf", sample=config["samples"]),       
-        # Rule nucleotide_coverage
-        expand("06_nt_coverage/{sample}_1_val_1_bismark_bt2_pe.deduplicated.nucleotide_stats.txt", sample=config["samples"]), 
-        # Rule extract_methylation
-        expand("06_methylation/CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz", sample=config["samples"]), 
-        expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz", sample=config["samples"]), 
-        expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz", sample=config["samples"]), 
-        expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R1.png", sample=config["samples"]), 
-        expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R2.png", sample=config["samples"]), 
-        expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt", sample=config["samples"]), 
-        expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt", sample=config["samples"]), 
-        expand("06_methylation/Non_CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz", sample=config["samples"]),     
-        # Rule cytosine_reports
-        expand("08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz", sample=config["samples"]),
-        # Rule qc_report
-        "09_multiqc/multiqc_report.html"
+	input:
+		# Rule trim
+		expand("02_trimmed/{sample}_1.fq.gz_trimming_report.txt", sample=config["samples"]),
+		expand("02_trimmed/{sample}_1_val_1_fastqc.html", sample=config["samples"]),
+		expand("02_trimmed/{sample}_1_val_1_fastqc.zip", sample=config["samples"]),
+		expand("02_trimmed/{sample}_1_val_1.fq.gz", sample=config["samples"]),
+		expand("02_trimmed/{sample}_2.fq.gz_trimming_report.txt", sample=config["samples"]),
+		expand("02_trimmed/{sample}_2_val_2_fastqc.html", sample=config["samples"]),
+		expand("02_trimmed/{sample}_2_val_2_fastqc.zip", sample=config["samples"]),
+		expand("02_trimmed/{sample}_2_val_2.fq.gz", sample=config["samples"]),
+		# Rule screen
+		expand("03_screened/{sample}_1_val_1_screen.bisulfite_orientation.png", sample=config["samples"]),
+		expand("03_screened/{sample}_1_val_1_screen.html", sample=config["samples"]),
+		expand("03_screened/{sample}_1_val_1_screen.png", sample=config["samples"]),
+		expand("03_screened/{sample}_1_val_1_screen.txt", sample=config["samples"]),
+		# Rule align
+		expand("04_aligned/{sample}_1_val_1_bismark_bt2_pe.bam", sample=config["samples"]),
+		expand("04_aligned/{sample}_1_val_1_bismark_bt2_PE_report.txt", sample=config["samples"]),
+		# Rule deduplicate
+		expand("05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam", sample=config["samples"]),
+		expand("05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplication_report.txt", sample=config["samples"]),
+		# Rule sort
+		expand("06_sorted/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam", sample=config["samples"]),
+		# Rule size_metrics
+		expand("07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.insert.txt", sample=config["samples"]),
+		expand("07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.histogram.pdf", sample=config["samples"]),		 
+		# Rule nucleotide_coverage
+		expand("06_nt_coverage/{sample}_1_val_1_bismark_bt2_pe.deduplicated.nucleotide_stats.txt", sample=config["samples"]), 
+		# Rule extract_methylation
+		expand("06_methylation/CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz", sample=config["samples"]), 
+		expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz", sample=config["samples"]), 
+		expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz", sample=config["samples"]), 
+		expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R1.png", sample=config["samples"]), 
+		expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R2.png", sample=config["samples"]), 
+		expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt", sample=config["samples"]), 
+		expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt", sample=config["samples"]), 
+		expand("06_methylation/Non_CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz", sample=config["samples"]),		
+		# Rule cytosine_reports
+		expand("08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz", sample=config["samples"]),
+		# Rule qc_report
+		"09_multiqc/multiqc_report.html"
 
 rule trim:
-    message: "Trimming samples"
-    input:
-        r1 = "01_raw_sequences/{sample}_1.fq.gz",
-        r2 = "01_raw_sequences/{sample}_2.fq.gz",
-    output:
-        out1 = "02_trimmed/{sample}_1.fq.gz_trimming_report.txt",
-        out2 = "02_trimmed/{sample}_1_val_1_fastqc.html",
-        out3 = "02_trimmed/{sample}_1_val_1_fastqc.zip",
-        out4 = "02_trimmed/{sample}_1_val_1.fq.gz",
-        out5 = "02_trimmed/{sample}_2.fq.gz_trimming_report.txt",
-        out6 = "02_trimmed/{sample}_2_val_2_fastqc.html",
-        out7 = "02_trimmed/{sample}_2_val_2_fastqc.zip",
-        out8 = "02_trimmed/{sample}_2_val_2.fq.gz"
-    log: "00_std_err_logs/02_trimmed_{sample}.log"
-    benchmark: "00_time_logs/02_trimmed_{sample}.txt"
-    resources:
-        mem_mb = 1024 * 50, # Last number is memory in GB
+	message: "Trimming samples"
+	input:
+		r1 = "01_raw_sequences/{sample}_1.fq.gz",
+		r2 = "01_raw_sequences/{sample}_2.fq.gz",
+	output:
+		out1 = "02_trimmed/{sample}_1.fq.gz_trimming_report.txt",
+		out2 = "02_trimmed/{sample}_1_val_1_fastqc.html",
+		out3 = "02_trimmed/{sample}_1_val_1_fastqc.zip",
+		out4 = "02_trimmed/{sample}_1_val_1.fq.gz",
+		out5 = "02_trimmed/{sample}_2.fq.gz_trimming_report.txt",
+		out6 = "02_trimmed/{sample}_2_val_2_fastqc.html",
+		out7 = "02_trimmed/{sample}_2_val_2_fastqc.zip",
+		out8 = "02_trimmed/{sample}_2_val_2.fq.gz"
+	log: "00_std_err_logs/02_trimmed_{sample}.log"
+	benchmark: "00_time_logs/02_trimmed_{sample}.txt"
+	resources:
+		mem_mb = 1024 * 50, # Last number is memory in GB
 		time = 60 * 24 * 1, # Last number is days
-		partition = "{config[partition]}"
-    shell: "trim_galore --paired --cores {threads} --2colour 20 --fastqc --clip_r1 10 --clip_r2 20 --three_prime_clip_r1 10 --three_prime_clip_r2 10 --output_dir 02_trimmed/ {input.r1} {input.r2} 2> {log}"
+		partition = "{config[partition]}",
+	shell: "trim_galore --paired --cores {threads} --2colour 20 --fastqc --clip_r1 10 --clip_r2 20 --three_prime_clip_r1 10 --three_prime_clip_r2 10 --output_dir 02_trimmed/ {input.r1} {input.r2} 2> {log}"
 
 rule screen:
-    message: "Screening samples for sample origin"
-    input:
-        conf = "00_software/fastq_screen.conf",
-        r1 = "02_trimmed/{sample}_1_val_1.fq.gz",
-        r2 = "02_trimmed/{sample}_2_val_2.fq.gz"
-    output: 
-        out1 = "03_screened/{sample}_1_val_1_screen.bisulfite_orientation.png",
-        out2 = "03_screened/{sample}_1_val_1_screen.html",
-        out3 = "03_screened/{sample}_1_val_1_screen.png",
-        out4 = "03_screened/{sample}_1_val_1_screen.txt"
-    log: "00_std_err_logs/03_screened_{sample}.log"
-    benchmark: "00_time_logs/03_screened_{sample}.txt"
-    resources:
-        mem_mb = 1024 * 50, # Last number is memory in GB
+	message: "Screening samples for sample origin"
+	input:
+		conf = "00_software/fastq_screen.conf",
+		r1 = "02_trimmed/{sample}_1_val_1.fq.gz",
+		r2 = "02_trimmed/{sample}_2_val_2.fq.gz"
+	output: 
+		out1 = "03_screened/{sample}_1_val_1_screen.bisulfite_orientation.png",
+		out2 = "03_screened/{sample}_1_val_1_screen.html",
+		out3 = "03_screened/{sample}_1_val_1_screen.png",
+		out4 = "03_screened/{sample}_1_val_1_screen.txt"
+	log: "00_std_err_logs/03_screened_{sample}.log"
+	benchmark: "00_time_logs/03_screened_{sample}.txt"
+	resources:
+		mem_mb = 1024 * 50, # Last number is memory in GB
 		time = 60 * 24 * 1, # Last number is days
-		partition = "{config[partition]}"
-    shell: "fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r1} --outdir 03_screened 2> {log}"
-    
+		partition = "{config[partition]}",
+	shell: "fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r1} --outdir 03_screened 2> {log}"
+	
 rule align:
-    message: "Aligning bisfulite reads"
-    input:
-        r1 = "02_trimmed/{sample}_1_val_1.fq.gz",
-        r2 = "02_trimmed/{sample}_2_val_2.fq.gz"
-    output: 
-        out1 = "04_aligned/{sample}_1_val_1_bismark_bt2_pe.bam",
-        out2 = "04_aligned/{sample}_1_val_1_bismark_bt2_PE_report.txt"
-    log: "00_std_err_logs/04_aligned_{sample}.txt"
-    benchmark: "00_time_logs/04_aligned_{sample}.txt"
-    resources:
-        mem_mb = 1024 * 150, # Last number is memory in GB
+	message: "Aligning bisfulite reads"
+	input:
+		r1 = "02_trimmed/{sample}_1_val_1.fq.gz",
+		r2 = "02_trimmed/{sample}_2_val_2.fq.gz"
+	output: 
+		out1 = "04_aligned/{sample}_1_val_1_bismark_bt2_pe.bam",
+		out2 = "04_aligned/{sample}_1_val_1_bismark_bt2_PE_report.txt"
+	log: "00_std_err_logs/04_aligned_{sample}.txt"
+	benchmark: "00_time_logs/04_aligned_{sample}.txt"
+	resources:
+		mem_mb = 1024 * 150, # Last number is memory in GB
 		time = 60 * 24 * 2, # Last number is days
-		partition = "{config[partition]}"
-    shell: """
-    bismark -n 1 --genome /share/lasallelab/genomes/{config[genome]}/ --multicore 6 -1 {input.r1} -2 {input.r2} 2> {log}
-    mv {wildcards.sample}_1_val_1_bismark_bt2_pe.bam 04_aligned/
-    mv {wildcards.sample}_1_val_1_bismark_bt2_PE_report.txt 04_aligned/
-    """
+		partition = "{config[partition]}",
+	shell: """
+	bismark -n 1 --genome /share/lasallelab/genomes/{config[genome]}/ --multicore 6 -1 {input.r1} -2 {input.r2} 2> {log}
+	mv {wildcards.sample}_1_val_1_bismark_bt2_pe.bam 04_aligned/
+	mv {wildcards.sample}_1_val_1_bismark_bt2_PE_report.txt 04_aligned/
+	"""
 
 rule deduplicate:
-    message: "Removing PCR duplicates"
-    input: "04_aligned/{sample}_1_val_1_bismark_bt2_pe.bam"
-    output:
-        "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam",
-        "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplication_report.txt"
-    log: "00_std_err_logs/05_deduplicated_{sample}.txt"
-    benchmark: "00_time_logs/05_deduplicated_{sample}.txt"
-    resources:
-        mem_mb = 1024 * 50, # Last number is memory in GB
+	message: "Removing PCR duplicates"
+	input: "04_aligned/{sample}_1_val_1_bismark_bt2_pe.bam"
+	output:
+		"05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam",
+		"05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplication_report.txt"
+	log: "00_std_err_logs/05_deduplicated_{sample}.txt"
+	benchmark: "00_time_logs/05_deduplicated_{sample}.txt"
+	resources:
+		mem_mb = 1024 * 50, # Last number is memory in GB
 		time = 60 * 24 * 1, # Last number is days
-		partition = "{config[partition]}"
-    shell: """
-    deduplicate_bismark --bam --paired {input} 2> {log}
-    mv {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplicated.bam 05_deduplicated/
-    mv {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplication_report.txt 05_deduplicated/
-    """
+		partition = "{config[partition]}",
+	shell: """
+	deduplicate_bismark --bam --paired {input} 2> {log}
+	mv {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplicated.bam 05_deduplicated/
+	mv {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplication_report.txt 05_deduplicated/
+	"""
  
 rule sort:
-    message: "Sorting BAM files"
-    input: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
-    output: "06_sorted/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam"
-    log: "00_std_err_logs/06_sorted_{sample}.txt"
-    benchmark: "00_time_logs/06_sorted_{sample}.txt"
-    resources:
-        mem_mb = 1024 * 50, # Last number is memory in GB
+	message: "Sorting BAM files"
+	input: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
+	output: "06_sorted/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam"
+	log: "00_std_err_logs/06_sorted_{sample}.txt"
+	benchmark: "00_time_logs/06_sorted_{sample}.txt"
+	resources:
+		mem_mb = 1024 * 50, # Last number is memory in GB
 		time = 60 * 24 * 1, # Last number is days
-		partition = "{config[partition]}"
-    shell: "picard SortSam INPUT={input} OUTPUT={output} SORT_ORDER=coordinate 2> {log}"
+		partition = "{config[partition]}",
+	shell: "picard SortSam INPUT={input} OUTPUT={output} SORT_ORDER=coordinate 2> {log}"
 
 rule size_metrics:
-    message: "Collecting insert size metrics"
-    input: "06_sorted/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam"
-    output: 
-        ins = "07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.insert.txt",
-        hist = "07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.histogram.pdf"
-    log: "00_std_err_logs/07_size_metrics_{sample}.txt"
-    benchmark: "00_time_logs/07_size_metrics_{sample}.txt"
-    resources:
-        mem_mb = 1024 * 50, # Last number is memory in GB
+	message: "Collecting insert size metrics"
+	input: "06_sorted/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam"
+	output: 
+		ins = "07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.insert.txt",
+		hist = "07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.histogram.pdf"
+	log: "00_std_err_logs/07_size_metrics_{sample}.txt"
+	benchmark: "00_time_logs/07_size_metrics_{sample}.txt"
+	resources:
+		mem_mb = 1024 * 50, # Last number is memory in GB
 		time = 60 * 24 * 1, # Last number is days
-		partition = "{config[partition]}"
-    shell: "picard CollectInsertSizeMetrics INPUT={input} OUTPUT={output.ins} HISTOGRAM_FILE={output.hist} ASSUME_SORTED=TRUE 2> {log}"
+		partition = "{config[partition]}",
+	shell: "picard CollectInsertSizeMetrics INPUT={input} OUTPUT={output.ins} HISTOGRAM_FILE={output.hist} ASSUME_SORTED=TRUE 2> {log}"
 
 rule nucleotide_coverage:
-    message: "Assessing nucleotide coverage"
-    input: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
-    output: "06_nt_coverage/{sample}_1_val_1_bismark_bt2_pe.deduplicated.nucleotide_stats.txt"
-    log: "00_std_err_logs/06_nt_coverage_{sample}.txt"
-    benchmark: "00_time_logs/06_nt_coverage_{sample}.txt"
-    resources:
-        mem_mb = 1024 * 50, # Last number is memory in GB
+	message: "Assessing nucleotide coverage"
+	input: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
+	output: "06_nt_coverage/{sample}_1_val_1_bismark_bt2_pe.deduplicated.nucleotide_stats.txt"
+	log: "00_std_err_logs/06_nt_coverage_{sample}.txt"
+	benchmark: "00_time_logs/06_nt_coverage_{sample}.txt"
+	resources:
+		mem_mb = 1024 * 50, # Last number is memory in GB
 		time = 60 * 24 * 1, # Last number is days
-		partition = "{config[partition]}"
-    shell: "bam2nuc --genome_folder /share/lasallelab/genomes/{config[genome]}/ {input} --dir 06_nt_coverage 2> {log}"
+		partition = "{config[partition]}",
+	shell: "bam2nuc --genome_folder /share/lasallelab/genomes/{config[genome]}/ {input} --dir 06_nt_coverage 2> {log}"
 
 rule extract_methylation:
-    message: "Extracting methylation"
-    input: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
-    output: 
-        "06_methylation/CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz",
-        "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz",
-        "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz",
-        "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R1.png",
-        "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R2.png",
-        "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt",
-        "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt",
-        "06_methylation/Non_CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz"
-    log: "00_std_err_logs/06_methylation_{sample}.txt"
-    benchmark: "00_time_logs/06_methylation_{sample}.txt"
-    resources:
-        mem_mb = 1024 * 50, # Last number is memory in GB
+	message: "Extracting methylation"
+	input: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
+	output: 
+		"06_methylation/CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz",
+		"06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz",
+		"06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz",
+		"06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R1.png",
+		"06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R2.png",
+		"06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt",
+		"06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt",
+		"06_methylation/Non_CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz"
+	log: "00_std_err_logs/06_methylation_{sample}.txt"
+	benchmark: "00_time_logs/06_methylation_{sample}.txt"
+	resources:
+		mem_mb = 1024 * 50, # Last number is memory in GB
 		time = 60 * 24 * 2, # Last number is days
-		partition = "{config[partition]}"
-    shell: "bismark_methylation_extractor --paired-end --gzip --comprehensive --merge_non_CpG --bedGraph --multicore 6 --buffer_size 34G {input} --output_dir 06_methylation/ 2> {log}"
+		partition = "{config[partition]}",
+	shell: "bismark_methylation_extractor --paired-end --gzip --comprehensive --merge_non_CpG --bedGraph --multicore 6 --buffer_size 34G {input} --output_dir 06_methylation/ 2> {log}"
 
 rule cytosine_reports:
-    message: "Generating genome-wide cytosine reports"
-    input:
-        "06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz"
-    output: 
-        protected("08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz")
-    log: "00_std_err_logs/08_cytosine_reports_{sample}.txt"
-    benchmark: "00_time_logs/08_cytosine_reports_{sample}.txt"
-    resources:
-        mem_mb = 1024 * 50, # Last number is memory in GB
+	message: "Generating genome-wide cytosine reports"
+	input:
+		"06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz"
+	output: 
+		protected("08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz")
+	log: "00_std_err_logs/08_cytosine_reports_{sample}.txt"
+	benchmark: "00_time_logs/08_cytosine_reports_{sample}.txt"
+	resources:
+		mem_mb = 1024 * 50, # Last number is memory in GB
 		time = 60 * 24 * 2, # Last number is days
-		partition = "{config[partition]}"
-    shell: "coverage2cytosine --dir 08_cytosine_reports --gzip --merge_CpG {input} --genome_folder /share/lasallelab/genomes/{config[genome]}/ --output {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz 2> {log}"
-    
+		partition = "{config[partition]}",
+	shell: "coverage2cytosine --dir 08_cytosine_reports --gzip --merge_CpG {input} --genome_folder /share/lasallelab/genomes/{config[genome]}/ --output {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz 2> {log}"
+	
 rule qc_report:
-    message: "Generating QC reports"
-    input: expand("08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz", sample=config["samples"])
-    output: 
-        out1 = "09_multiqc/multiqc_report.html",
-        out2 = directory("09_multiqc/multiqc_data/")
-    log: "00_std_err_logs/09_multiqc.txt"
-    benchmark: "00_time_logs/09_multiqc.txt"
-    resources:
-        mem_mb = 1024 * 50, # Last number is memory in GB
+	message: "Generating QC reports"
+	input: expand("08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz", sample=config["samples"])
+	output: 
+		out1 = "09_multiqc/multiqc_report.html",
+		out2 = directory("09_multiqc/multiqc_data/")
+	log: "00_std_err_logs/09_multiqc.txt"
+	benchmark: "00_time_logs/09_multiqc.txt"
+	resources:
+		mem_mb = 1024 * 50, # Last number is memory in GB
 		time = 60 * 24 * 1, # Last number is days
-		partition = "{config[partition]}"
-    shell: 
-        """
-        multiqc . --ignore raw_sequences --ignore 01_raw_sequences 2> {log}
-        mv multiqc_report.html {output.out1}
-        mv multiqc_data/ {output.out2}
-        """
+		partition = "{config[partition]}",
+	shell: 
+		"""
+		multiqc . --ignore raw_sequences --ignore 01_raw_sequences 2> {log}
+		mv multiqc_report.html {output.out1}
+		mv multiqc_data/ {output.out2}
+		"""
