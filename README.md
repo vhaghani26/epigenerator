@@ -119,7 +119,7 @@ For the above reasons, it is HIGHLY recommended that you instead run it via SLUR
 
 You will need to set up two files in order to run this workflow through slurm.
 
-**1. `slurm-status.py`
+**1. `slurm-status.py`**
 
 In your home directory, create a directory structure that reflects `~/.config/snakemake/slurm/`. Create a file called `slurm-status.py` in this directory and copy and paste the following into the file:
 
@@ -166,7 +166,7 @@ else:
 """
 ```
 
-**2. `config.yaml`
+**2. `config.yaml`**
 
 In the same directory as `slurm-status.py` (i.e. `~/.config/snakemake/slurm/`), create a file called `config.yaml`. The only thing you will need to change is the `conda_prefix` (the third to last line). It looks something like `/software/anaconda3/4.8.3/lssc0-linux/`, `/home/vhaghani/anaconda3/`, or `/share/lasallelab/programs/.conda/`.
 
