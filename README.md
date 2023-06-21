@@ -42,16 +42,24 @@ rm .git/
 Run the following command in your project directory. It will clone the conda environment with all dependencies needed in order to run the workflow outlined here. This creates an environment called `wgbs`. If you would like to change the name, feel free to do so where the command says `wgbs`. Please note that this may take quite a few minutes to run.
 
 ```
-conda env create -f 00_software/environment.yml --name wgbs
+conda env create -f 00_software/environment.yml --name cpg_me2
 ```
 
 Activate your environment using
 
 ```
-conda activate wgbs
+conda activate cpg_me2
 ```
 
 Run everything downstream of this point in this conda environment. Note that you must activate this environment every time you restart your terminal.
+
+**For LaSalle Lab**
+
+The environment is already installed and ready in a shared space, so all you will need to do is run:
+
+```
+conda activate /share/lasallelab/programs/.conda/cpg_me2
+```
 
 
 ## 1. `FASTQ_Me`
