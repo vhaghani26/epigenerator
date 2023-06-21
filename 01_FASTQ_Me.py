@@ -175,7 +175,6 @@ print("\n")
 if slurm_use.lower() == "yes" or proper_dir.lower() == "y":
     # Incorporate SLURM configuration information
     print("The following questions are going to help create the configuration file to be used and submitted in CpG_Me.")
-    print("\n")
     
     # SLURM Username
     user = input("What is your username on the Cluster? This can be determined by running 'echo $USER' at the terminal if you are unsure. ")
@@ -193,29 +192,13 @@ if slurm_use.lower() == "yes" or proper_dir.lower() == "y":
     partition = input("What partition are you using when you submit jobs to SLURM? If you work in LaSalle Lab at UC Davis, use 'production'. ")
     print("\n")
 
-    # Set up user profile
-    print("Determining if SLURM profile is set up...")
+    # Ensure SLURM set up is done 
+    ready_for_slurm = input("Have you set up slurm-status.py and config.yaml? (y/n) ")
+    if ready_for_slurm.lower() == "no" or ready_for_slurm.lower() == "n":
+        print("Please see the GitHub repository for information on how to create these files.")
+        sys.exit()
 
-    # Ensure slurm-status.py is present and make it if not
-    print("Searching for slurm-status.py...")
-    slurm_status = "~/.config/snakemake/slurm/slurm-status.py"
-    isExist = os.path.isfile(slurm_status)
-    if not isExist:
-        print("slurm-status.py not found. Please see the GitHub repository for information on how to create this file.")
-        sys.exit()
-    if isExist:
-        print("slurm-status.py found")
- 
-    # Ensure config.yaml is present and make it if not
-    print("Searching for config.yaml...")
-    config_yaml = "~/.config/snakemake/slurm/config.yaml"
-    isExist = os.path.isfile(config_yaml)
-    if not isExist:
-        print("config.yaml not found. Please see the GitHub repository for information on how to create this file.")
-        sys.exit()
-    if isExist:
-        print("config.yaml found")   
-        print("\n")
+print("\n")
 
 ######################
 ## Make Config File ##
@@ -267,7 +250,7 @@ del sample_ids
 #################
 
 ready_or_not = input("Are you ready to merge lanes? (y/n) ")
-if ready_or_not.lower() == "no" or proper_dir.lower() == "n":
+if ready_or_not.lower() == "no" or ready_or_not.lower() == "n":
     print("Please try again when you're ready.")
     sys.exit()
 
