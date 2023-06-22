@@ -1,4 +1,4 @@
-# Simplifying Complex Data: A Practical Workflow for Whole Genome Bisulfite Sequencing (WGBS) Analysis
+# Epigenerator: A Practical Workflow for Whole Genome Bisulfite Sequencing (WGBS) Analysis
 
 ## Table of Contents
 
