@@ -48,13 +48,13 @@ cd {project_name}
 Run the following command in your project directory. It will clone the conda environment with all dependencies needed in order to run the workflow outlined here. This creates an environment called `wgbs`. If you would like to change the name, feel free to do so where the command says `wgbs`. Please note that this may take quite a few minutes to run.
 
 ```
-conda env create -f 00_software/environment.yml --name cpg_me2
+conda env create -f 00_software/environment.yml --name epigenerator
 ```
 
 Activate your environment using
 
 ```
-conda activate cpg_me2
+conda activate epigenerator
 ```
 
 Run everything downstream of this point in this conda environment. Note that you must activate this environment every time you restart your terminal.
@@ -64,7 +64,7 @@ Run everything downstream of this point in this conda environment. Note that you
 The environment is already installed and ready in a shared space, so all you will need to do is run:
 
 ```
-conda activate /share/lasallelab/programs/.conda/cpg_me2
+conda activate /share/lasallelab/programs/.conda/epigenerator
 ```
 
 
@@ -82,7 +82,7 @@ If you've already downloaded your data onto Epigenerate, then you will be prompt
 
 **Merging Lanes**
 
-Once `FASTQ_Me2` has downloaded or located the data, it will ask some questions about the way your sequence files are named so that it can extrapolate the sample IDs and orientation of the reads (i.e. forward vs. reverse). It will ask for your confirmation along the way to make sure that your samples are being handled correctly. Shortly before merging, it will print out the merge commands (beginning with `cat`) that will be run. If anything is wrong with the way they look, you will need to rename or reorganize your sequence files or try re-entering the metadata in `FASTQ_Me2` until the correct merge commands appear. Once you confirm that the merges are correct, they will be carried out. `FASTQ_Me2` will also ask some information about your user information. This serves to set up a configuration file, `task_samples.yaml`, which contains your user metadata as well as project-specific information. This file gets read into `CpG_Me2` and helps with submission of individual jobs per sample.
+Once `FASTQ_Me2` has downloaded or located the data, it will ask some questions about the way your sequence files are named so that it can extrapolate the sample IDs and orientation of the reads (i.e. forward vs. reverse). It will ask for your confirmation along the way to make sure that your samples are being handled correctly. If you only have one lane, you can either (1) proceed with the merging, which effectively duplicates your data, but handles all of the naming and organization for you or (2) rename your samples in the format of `{sample}_1.fq.gz` and `{sample}_2.fq.gz` and place them in a directory called `01_raw_sequences/`. If you have more than one lane, you should proceed with merging so that the data input structure is compatible with `CpG_Me2`. Shortly before merging, `FASTQ_Me2` will print out the merge commands (beginning with `cat`) that will be run. If anything is wrong with the way they look, you will need to rename or reorganize your sequence files or try re-entering the metadata in `FASTQ_Me2` until the correct merge commands appear. Once you confirm that the merges are correct, they will be carried out. `FASTQ_Me2` will also ask some information about your user information. This serves to set up a configuration file, `task_samples.yaml`, which contains your user metadata as well as project-specific information. This file gets read into `CpG_Me2` and helps with submission of individual jobs per sample.
 
 **Running `FASTQ_Me2`**
 
@@ -176,7 +176,10 @@ else:
 
 **2. `config.yaml`**
 
-In the same directory as `slurm-status.py` (i.e. `~/.config/snakemake/slurm/`), create a file called `config.yaml`. The only thing you will need to change is the `conda_prefix` (the third to last line). It looks something like `/software/anaconda3/4.8.3/lssc0-linux/`, `/home/vhaghani/anaconda3/`, or `/share/lasallelab/programs/.conda/`.
+In the same directory as `slurm-status.py` (i.e. `~/.config/snakemake/slurm/`), create a file called `config.yaml`. You will need to change two things:
+
+1. Update your SLURM partition on the line `--partition={partition}` by inputting a string. This will look something like `--partition="production"`
+2. Change the `conda_prefix` (the third to last line). It should look something like `/software/anaconda3/4.8.3/lssc0-linux/`, `/home/vhaghani/anaconda3/`, or `/share/lasallelab/programs/.conda/`
 
 ```
 cluster:
@@ -190,7 +193,7 @@ cluster:
     --nodes={resources.nodes}
     --output=logs/{rule}/{jobid}.out
     --error=logs/{rule}/{jobid}.err
-    --partition={resources.partition}
+    --partition={partition}
     --parsable
 default-resources:
   - mem_mb=2000

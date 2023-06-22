@@ -187,10 +187,6 @@ if slurm_use.lower() == "yes" or proper_dir.lower() == "y":
     print("\n")
     mail_user = input("What email would you like to receive notifications at? ")
     print("\n")
-    
-    # Partition
-    partition = input("What partition are you using when you submit jobs to SLURM? If you work in LaSalle Lab at UC Davis, use 'production'. ")
-    print("\n")
 
     # Ensure SLURM set up is done 
     ready_for_slurm = input("Have you set up slurm-status.py and config.yaml? (y/n) ")
