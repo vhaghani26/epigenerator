@@ -215,7 +215,7 @@ conda-frontend: conda
 cluster-status: ~/.config/snakemake/slurm/slurm-status.py
 ```
 
-Once these files are created, activate the conda environment and enter your project directory. Snakemake manages the submission of jobs, so wherever you run it, it will need to stay open. As such, I recommend running it in [screen](https://linuxize.com/post/how-to-use-linux-screen/). When you are ready, run:
+Once these files are created, enter your project directory. Snakemake manages the submission of jobs, so wherever you run it, it will need to stay open. As such, I recommend running it in [screen](https://linuxize.com/post/how-to-use-linux-screen/). Activate the conda environment (confirm you are in the environment if you are using screen).  When you are ready, run:
 
 ```
 snakemake -s 02_CpG_Me2_PE --profile slurm 
