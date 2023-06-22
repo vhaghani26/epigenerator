@@ -186,7 +186,7 @@ cluster:
     --cpus-per-task={threads}
     --mem={resources.mem_mb}
     --time={resources.time}
-    --job-name=smk-{rule}
+    --job-name=epigenerator-{rule}
     --ntasks={resources.nodes}
     --nodes={resources.nodes}
     --output=logs/{rule}/{jobid}.out
