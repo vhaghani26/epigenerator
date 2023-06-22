@@ -256,9 +256,9 @@ for key, value in files_per_samp.items():
 for key, value in for_vs_rev.items():
    for direction, files in value.items():
        if direction == "Forward":
-           print("cat", " ".join(for_vs_rev[key]["Forward"]), f"> {key}_1.fq.gz")
+           print("cat", " ".join(for_vs_rev[key]["Forward"]), f"> 01_raw_sequences/{key}_1.fq.gz")
        elif direction == "Reverse":
-           print("cat", " ".join(for_vs_rev[key]["Reverse"]), f"> {key}_2.fq.gz")
+           print("cat", " ".join(for_vs_rev[key]["Reverse"]), f"> 01_raw_sequences/{key}_2.fq.gz")
        else:
            print("Could not determine forward vs. reverse reads. Please consider renaming your files and try again.")
            sys.exit()
