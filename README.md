@@ -100,6 +100,8 @@ python3 01_FASTQ_Me2.py
 
 There are two ways that you can run `CpG_Me2`. 
 
+**Please note that currently, this is only compatible with the UC Davis Genome Center HPC. Updates are being made to make it more available for other users**
+
 ### Running `CpG_Me2` Locally
 
 Since all the information setup was done when you run `FASTQ_Me2`, all you have to do now is run the following to run `CpG_Me2`:
