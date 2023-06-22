@@ -6,7 +6,7 @@
 * [Project Set-Up](#project-set-up)
 	* [Setting Up Your Project Directory](#setting-up-your-project-directory)
 	* [Installation](#installation)
-* [1. `FASTQ_Me`](#1-fastq_me)
+* [1. `FASTQ_Me2`](#1-fastq_me2)
 * [2. `CpG_Me2`](#2-cpg_me2)
 	* [Running `CpG_Me2` Locally](#running-cpg_me2-Locally)
 	* [Running `CpG_Me2` on SLURM (Recommended)](#Running-CpG_Me2-on-SLURM-Recommended)
@@ -18,8 +18,8 @@
 
 The original [CpG_Me](https://github.com/ben-laufer/CpG_Me), written by Dr. Ben Laufer, was intended to merge WGBS sequencing lanes and generate cytosine reports to be used in further analysis, such as in DMRichR and Comethyl. Upon trying the pipeline for the first time, I ran into some complications specific to my data (which was not downloaded from SLIMS), and I had the idea to make it more modular and a little easier to use for first-time users. Please note that my use of "local" below refers to `/share/lasallelab/` instead of SLURM. Here are some of the updates I made:
 
-* `FASTQ_Me` has been rewritten as a python script
-* Locally downloaded sequencing data can now be used in `FASTQ_Me`
+* `FASTQ_Me2` has been rewritten as a python script
+* Locally downloaded sequencing data can now be used in `FASTQ_Me2`
 * Users will only interact with command line prompts instead of adapting any of the scripts
 * `CpG_Me2` can be run locally as a script instead of only through SLURM 
 * `CpG_Me2` has been written as a snakemake file, yielding the following advantages:
@@ -68,9 +68,9 @@ conda activate /share/lasallelab/programs/.conda/cpg_me2
 ```
 
 
-## 1. `FASTQ_Me`
+## 1. `FASTQ_Me2`
 
-When you receive your sequencing data, the sequencing lanes will need to be merged. FASTQ_Me handles the merging of lanes whether the data is maintained on SLIMS or local.
+When you receive your sequencing data, the sequencing lanes will need to be merged. FASTQ_Me2 handles the merging of lanes whether the data is maintained on SLIMS or local.
 
 **SLIMS Data**
 
@@ -82,14 +82,14 @@ If you've already downloaded your data onto Epigenerate, then you will be prompt
 
 **Merging Lanes**
 
-Once `FASTQ_Me` has downloaded or located the data, it will ask some questions about the way your sequence files are named so that it can extrapolate the sample IDs and orientation of the reads (i.e. forward vs. reverse). It will ask for your confirmation along the way to make sure that your samples are being handled correctly. Shortly before merging, it will print out the merge commands (beginning with `cat`) that will be run. If anything is wrong with the way they look, you will need to rename or reorganize your sequence files or try re-entering the metadata in `FASTQ_Me` until the correct merge commands appear. Once you confirm that the merges are correct, they will be carried out. `FASTQ_Me` will also ask some information about your user information. This serves to set up a configuration file, `task_samples.yaml`, which contains your user metadata as well as project-specific information. This file gets read into `CpG_Me2` and helps with submission of individual jobs per sample.
+Once `FASTQ_Me2` has downloaded or located the data, it will ask some questions about the way your sequence files are named so that it can extrapolate the sample IDs and orientation of the reads (i.e. forward vs. reverse). It will ask for your confirmation along the way to make sure that your samples are being handled correctly. Shortly before merging, it will print out the merge commands (beginning with `cat`) that will be run. If anything is wrong with the way they look, you will need to rename or reorganize your sequence files or try re-entering the metadata in `FASTQ_Me2` until the correct merge commands appear. Once you confirm that the merges are correct, they will be carried out. `FASTQ_Me2` will also ask some information about your user information. This serves to set up a configuration file, `task_samples.yaml`, which contains your user metadata as well as project-specific information. This file gets read into `CpG_Me2` and helps with submission of individual jobs per sample.
 
-**Running `FASTQ_Me`**
+**Running `FASTQ_Me2`**
 
-To run `FASTQ_Me`, all you need to do is run the following in your project directory:
+To run `FASTQ_Me2`, all you need to do is run the following in your project directory:
 
 ```
-python3 01_FASTQ_Me.py
+python3 01_FASTQ_Me2.py
 ```
 
 ## 2. `CpG_Me2`
@@ -102,7 +102,7 @@ There are two ways that you can run `CpG_Me2`.
 
 ### Running `CpG_Me2` Locally
 
-Since all the information setup was done when you run `FASTQ_Me`, all you have to do now is run the following to run `CpG_Me2`:
+Since all the information setup was done when you run `FASTQ_Me2`, all you have to do now is run the following to run `CpG_Me2`:
 
 ```
 nice -n 10 snakemake -j 3 -p -s 02_CpG_Me2_PE
