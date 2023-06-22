@@ -186,7 +186,7 @@ rule cytosine_reports:
 	input:
 		"06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz"
 	output: 
-		protected("08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz")
+		"08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz"
 	log: "00_std_err_logs/08_cytosine_reports_{sample}.txt"
 	benchmark: "00_time_logs/08_cytosine_reports_{sample}.txt"
 	resources:
