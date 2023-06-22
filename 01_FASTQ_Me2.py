@@ -183,10 +183,6 @@ original_stdout = sys.stdout
 with open(file, "a") as f:
     sys.stdout = f
     print("---")
-    print(f"user: {user}")
-    print(f"mail_user: {mail_user}")
-    print(f"mail_type: {mail_type}")
-    print(f"partition: {partition}")
     print(f"sequence_data: {data_dir}")
     print(f"genome: {genome}")
     print("samples:")
