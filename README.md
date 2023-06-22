@@ -123,8 +123,6 @@ For the above reasons, it is HIGHLY recommended that you instead run it via SLUR
 
 ### Running `CpG_Me2` on SLURM (Recommended)
 
-(coming as soon as I figure out how to make this work)
-
 You will need to set up two files in order to run this workflow through slurm.
 
 **1. `slurm-status.py`**
@@ -215,6 +213,12 @@ use-conda: True
 conda-prefix: {conda_prefix}
 conda-frontend: conda
 cluster-status: ~/.config/snakemake/slurm/slurm-status.py
+```
+
+Once these files are created, activate the conda environment, enter your project directory, and run:
+
+```
+snakemake -s 02_CpG_Me2_PE --profile slurm 
 ```
 
 ## Interpretting Outputs
