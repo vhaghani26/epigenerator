@@ -1,4 +1,4 @@
-# Processing WGBS (Whole Genome Bisulfite Sequencing) Data
+# Simplifying Complex Data: A Practical Workflow for Whole Genome Bisulfite Sequencing (WGBS) Analysis
 
 ## Table of Contents
 
