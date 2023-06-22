@@ -164,38 +164,6 @@ while genome != "hg38" and genome != "mm10" and genome != "hg19" and genome != "
 
 print("\n")
 
-#################
-## SLURM Setup ##
-#################
-
-slurm_use = input("Do you plan to use SLURM when you run CpG_Me? (y/n) ")
-print("\n")
-
-# User-specific configuration information
-if slurm_use.lower() == "yes" or proper_dir.lower() == "y":
-    # Incorporate SLURM configuration information
-    print("The following questions are going to help create the configuration file to be used and submitted in CpG_Me.")
-    
-    # SLURM Username
-    user = input("What is your username on the Cluster? This can be determined by running 'echo $USER' at the terminal if you are unsure. ")
-    print("\n")
-    
-    # Mail type
-    mail_type = input("When jobs are submitted for CpG_Me, would you like to be notified when a job begins, ends, fails, or all of the above? If you want the least notifications as possible, the best choice would be 'FAIL'. (BEGIN/END/FAIL/ALL) ")
-    while mail_type != "BEGIN" and mail_type != "END" and mail_type != "FAIL" and mail_type != "ALL":
-        mail_type = input("Make sure you are using all uppercase letters. Would you like to be notified when a job begins, ends, fails, or all of the above? (BEGIN/END/FAIL/ALL) ")
-    print("\n")
-    mail_user = input("What email would you like to receive notifications at? ")
-    print("\n")
-
-    # Ensure SLURM set up is done 
-    ready_for_slurm = input("Have you set up slurm-status.py and config.yaml? (y/n) ")
-    if ready_for_slurm.lower() == "no" or ready_for_slurm.lower() == "n":
-        print("Please see the GitHub repository for information on how to create these files.")
-        sys.exit()
-
-print("\n")
-
 ######################
 ## Make Config File ##
 ######################
