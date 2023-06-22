@@ -99,7 +99,7 @@ There are two ways that you can run `CpG_Me`.
 Since all the information setup was done when you run `FASTQ_Me`, all you have to do now is run the following to run `CpG_Me`:
 
 ```
-nice -n 10 snakemake -j 3 -p -s 02_CpG_Me_PE_v2
+nice -n 10 snakemake -j 3 -p -s 02_CpG_Me2_PE
 ```
 
 `nice -n 10` means you are assigning your job a lower priority than default jobs, which is good when you are using shared computer resources. The `-j` option for `jobs` means how many jobs are able to be run in parallel. We only have 64 CPUs on Epigenerate, so please be mindful not to use more than half without asking or warning other users in the Epigenerate Slack channel. Running roughly 3 jobs at once is relatively reasonable given our resource allocation since each job can take up to ~75 GB of RAM.
