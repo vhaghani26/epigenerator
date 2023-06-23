@@ -31,7 +31,7 @@ The original [CpG_Me](https://github.com/ben-laufer/CpG_Me), written by Dr. Ben 
 
 ### Setting Up Your Project Directory
 
-When you are getting ready to start processing your WGBS samples, the first thing you should do is enter your home directory `/share/lasallelab/yourname` and clone the repository using your project name:
+Clone the repository using your project name in the directory you plan to host the project:
 
 ```
 git clone https://github.com/vhaghani26/WGBS_workflow {project_name}
