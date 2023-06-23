@@ -174,7 +174,7 @@ else:
 
 In the same directory as `slurm-status.py` (i.e. `~/.config/snakemake/slurm/`), create a file called `config.yaml`. You will need to change two things:
 
-1. Update your SLURM partition on the line `--partition={partition}` by inputting a string. This will look something like `--partition="production"`
+1. Update your SLURM partition for the **two** lines containing `--partition={partition}` by inputting a string. This will look something like `--partition=production` 
 2. Change the `conda_prefix` (the third to last line). It should look something like `/software/anaconda3/4.8.3/lssc0-linux/`, `/home/vhaghani/anaconda3/`, or `/share/lasallelab/programs/.conda/`
 
 ```
@@ -194,7 +194,7 @@ cluster:
 default-resources:
   - mem_mb=2000
   - time=60
-  - partition=low2
+  - partition={partition}
   - threads=1
   - nodes=1
 jobs: 50
