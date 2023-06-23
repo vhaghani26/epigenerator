@@ -1,5 +1,7 @@
 # Epigenerator: A Practical Workflow for Whole Genome Bisulfite Sequencing (WGBS) Analysis
 
+**Please note that currently, this is only compatible with the UC Davis Genome Center HPC. Updates are being made to make it more available for other users**
+
 ## Table of Contents
 
 * [Updates](#updates)
@@ -70,7 +72,7 @@ conda activate /share/lasallelab/programs/.conda/epigenerator
 
 ## 1. `FASTQ_Me2`
 
-When you receive your sequencing data, the sequencing lanes will need to be merged. FASTQ_Me2 handles the merging of lanes whether the data is maintained on SLIMS or local.
+If you have more than one lane of data, the sequencing lanes will need to be merged. FASTQ_Me2 handles the merging of lanes whether the data is maintained on SLIMS or already downloaded on your system (i.e. local).
 
 **SLIMS Data**
 
@@ -78,11 +80,11 @@ If your data is on SLIMS, you will be prompted for your SLIMS string and SLIMS d
 
 **Local Data**
 
-If you've already downloaded your data onto Epigenerate, then you will be prompted to give the absolute path (i.e. starting from `/share/lasallelab/...`) to the raw data.
+If you've already downloaded your data, you will be prompted to give the absolute path to the raw data.
 
 **Merging Lanes**
 
-Once `FASTQ_Me2` has downloaded or located the data, it will ask some questions about the way your sequence files are named so that it can extrapolate the sample IDs and orientation of the reads (i.e. forward vs. reverse). It will ask for your confirmation along the way to make sure that your samples are being handled correctly. If you only have one lane, you can either (1) proceed with the merging, which effectively duplicates your data, but handles all of the naming and organization for you or (2) rename your samples in the format of `{sample}_1.fq.gz` and `{sample}_2.fq.gz` and place them in a directory called `01_raw_sequences/`. If you have more than one lane, you should proceed with merging so that the data input structure is compatible with `CpG_Me2`. Shortly before merging, `FASTQ_Me2` will print out the merge commands (beginning with `cat`) that will be run. If anything is wrong with the way they look, you will need to rename or reorganize your sequence files or try re-entering the metadata in `FASTQ_Me2` until the correct merge commands appear. Once you confirm that the merges are correct, they will be carried out. `FASTQ_Me2` will generate a configuration file, `task_samples.yaml`, that gets read into `CpG_Me2`.
+Once `FASTQ_Me2` has downloaded or located the data, it will ask some questions about the way your sequence files are named so that it can extrapolate the sample IDs and orientation of the reads (i.e. forward vs. reverse). It will ask for your confirmation along the way to make sure that your samples are being handled correctly. If you only have one lane, you can either (1) proceed with the merging, which effectively duplicates your data, but handles all of the naming and organization for you or (2) rename your samples in the format of `{sample}_1.fq.gz` and `{sample}_2.fq.gz` and place them in a directory called `01_raw_sequences/`. If you have more than one lane, you should proceed with merging so that the data input structure is compatible with `CpG_Me2`. Shortly before merging, `FASTQ_Me2` will print out the merge commands (beginning with `cat`) that will be run. If anything is wrong with the way they look, you will need to rename or reorganize your sequence files or try re-entering the metadata in `FASTQ_Me2` until the correct merge commands appear. Once you confirm that the merges are correct, they will be carried out. `FASTQ_Me2` will generate a configuration file, `task_samples.yaml`, that gets read into `CpG_Me2`. This `task_samples.yaml` file is **required** before running `CpG_Me2`. 
 
 **Running `FASTQ_Me2`**
 
@@ -100,24 +102,20 @@ python3 01_FASTQ_Me2.py
 
 There are two ways that you can run `CpG_Me2`. 
 
-**Please note that currently, this is only compatible with the UC Davis Genome Center HPC. Updates are being made to make it more available for other users**
-
 ### Running `CpG_Me2` Locally
 
-Since all the information setup was done when you run `FASTQ_Me2`, all you have to do now is run the following to run `CpG_Me2`:
+Since all the information setup was done when you run `FASTQ_Me2`, all you have to do now is run the following to run `CpG_Me2` from start to finish:
 
 ```
-nice -n 10 snakemake -j 3 -p -s 02_CpG_Me2_PE
+snakemake -j 1 -p -s 02_CpG_Me2_PE
 ```
 
-`nice -n 10` means you are assigning your job a lower priority than default jobs, which is good when you are using shared computer resources. The `-j` option for `jobs` means how many jobs are able to be run in parallel. We only have 64 CPUs on Epigenerate, so please be mindful not to use more than half without asking or warning other users in the Epigenerate Slack channel. Running roughly 3 jobs at once is relatively reasonable given our resource allocation since each job can take up to ~75 GB of RAM.
-
-`CpG_Me2` has been written such that this is all you need to run for your job to run from start to finish. If, for some reason, you are disconnected from Epigenerate or your job fails, re-run the above command and it will pick up where it left off. It even deletes possibly corrupted files from where it was cut off to ensure ALL outputs are properly generated. 
+The `-j` option for `jobs` means how many jobs are able to be run in parallel. The most resource-intensive step uses ~50-100 GB of RAM per sample, so be mindful of the resources you have available if you choose to run more than one job at a time. If, for some reason, you are disconnected from your terminal or your job fails, re-run the above command and it will pick up where it left off. It even deletes possibly corrupted files from where it was cut off to ensure ALL outputs are properly generated. 
 
 Notice some issues here.
 
-1. Because the alignment step uses so many resources, you are limited to running ~3 jobs at a time. When each sample requires 9 jobs, this can easily add up.
-2. If you get disconnected from your terminal, your job fails. This means that you need to be logged in and have an active terminal for days at a time.
+1. Because the alignment step uses so many resources, you are limited by the number of jobs you can run at the same time due to required resource allocations
+2. If you get disconnected from your terminal, your job fails. This means that you need to be logged in and have an active terminal for days at a time. This can be circumvented by running `CpG_Me2` in `screen`, but you will still need the proper resource allocation for that length of time.
 
 For the above reasons, it is HIGHLY recommended that you instead run it via SLURM. This is similar to what was initially written by Ben, where individual jobs get submitted to SLURM.
 
