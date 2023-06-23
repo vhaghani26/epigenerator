@@ -18,12 +18,12 @@
 
 ## Updates
 
-The original [CpG_Me](https://github.com/ben-laufer/CpG_Me), written by Dr. Ben Laufer, was intended to merge WGBS sequencing lanes and generate cytosine reports to be used in further analysis, such as in DMRichR and Comethyl. Upon trying the pipeline for the first time, I ran into some complications specific to my data (which was not downloaded from SLIMS), and I had the idea to make it more modular and a little easier to use for first-time users. Please note that my use of "local" below refers to `/share/lasallelab/` instead of SLURM. Here are some of the updates I made:
+The original [CpG_Me](https://github.com/ben-laufer/CpG_Me), written by Dr. Ben Laufer, was intended to merge WGBS sequencing lanes and generate cytosine reports to be used in further analysis, such as in DMRichR and Comethyl. Upon trying the pipeline for the first time, I ran into some complications specific to my data (which was not downloaded from SLIMS), and I had the idea to make it more modular and a little easier to use for first-time users. Here are some of the updates I made:
 
 * `FASTQ_Me2` has been rewritten as a python script
 * Locally downloaded sequencing data can now be used in `FASTQ_Me2`
 * Users will only interact with command line prompts instead of adapting any of the scripts
-* `CpG_Me2` can be run locally as a script instead of only through SLURM 
+* `CpG_Me2` can be run locally (i.e. on screen or at your terminal) as a script instead of only through SLURM 
 * `CpG_Me2` has been written as a snakemake file, yielding the following advantages:
     * Multi-threading of jobs can be handled locally or on SLURM
     * Jobs remove corrupted intermediate files if they fail
