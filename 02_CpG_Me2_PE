@@ -69,7 +69,7 @@ rule trim:
 	log: "00_std_err_logs/02_trimmed_{sample}.log"
 	benchmark: "00_time_logs/02_trimmed_{sample}.txt"
 	resources:
-		mem_mb = 1024 * 20, # Last number is memory in GB
+		mem_mb = 1024 * 15, # Last number is memory in GB
 		time = 60 * 24 * 1, # Last number is days
 	shell: "trim_galore --paired --cores {threads} --2colour 20 --fastqc --clip_r1 10 --clip_r2 20 --three_prime_clip_r1 10 --three_prime_clip_r2 10 --output_dir 02_trimmed/ {input.r1} {input.r2} 2> {log}"
 		
