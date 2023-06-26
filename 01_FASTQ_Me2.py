@@ -157,10 +157,7 @@ if samp_num.lower() == "no" or samp_num.lower() == "n":
 print("\n")
 
 # Determine genome
-genome = input("Please select the genome you would like to align your files to. (hg19/hg38/mm10/GRCm38) ")
-while genome != "hg38" and genome != "mm10" and genome != "hg19" and genome != "GRCm38":
-    print("You must select hg19, hg38, mm10, or GRCm38. Please try again.")
-    genome = input("What genome are you using? (hg19/hg38/mm10/GRCm38) ")
+genome = input("Please input the primary genome you will align your files to. This will need to match the name of the genome subdirectory you created in 01_genomes/ ")
 
 print("\n")
 
