@@ -9,11 +9,13 @@ cluster:
     --nodes={resources.nodes}
     --output=logs/{rule}/{jobid}.out
     --error=logs/{rule}/{jobid}.err
+    # Change next line
     --partition=production
     --parsable
 default-resources:
   - mem_mb=2000
   - time=60
+  # Change next line
   - partition=production
   - threads=1
   - nodes=1
@@ -28,6 +30,7 @@ rerun-incomplete: True
 printshellcmds: True
 scheduler: greedy
 use-conda: True
+# Change next line
 conda-prefix: /share/lasallelab/programs/.conda/
 conda-frontend: conda
-cluster-status: /share/lasallelab/Viki/WGBS_workflow/slurm/slurm-status.py
+cluster-status: 00_slurm/slurm-status.py
