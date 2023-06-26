@@ -123,8 +123,8 @@ For the above reasons, it is HIGHLY recommended that you instead run it via SLUR
 
 In the directory `00_slurm/`, there is a file named `config.yaml`. You will need to modify two things:
 
-1. Update your SLURM partition for the **two** lines containing `--partition` by inputting a string. This will look something like `--partition=production` 
-2. Change the `conda_prefix` (the third to last line). It should look something like `/software/anaconda3/4.8.3/lssc0-linux/`, `/home/vhaghani/anaconda3/`, or `/share/lasallelab/programs/.conda/`
+1. Update your SLURM partition for the **two** lines (line 12 and line 17) containing `--partition` by inputting a string. This will look something like `--partition=production` 
+2. Change the `conda_prefix` (line 31). It should look something like `/software/anaconda3/4.8.3/lssc0-linux/`, `/home/vhaghani/anaconda3/`, or `/share/lasallelab/programs/.conda/`
 
 Once you have updated `config.yaml`, go back to your project directory. Snakemake manages the submission of jobs, so wherever you run it, it will need to stay open. As such, I recommend running it in [screen](https://linuxize.com/post/how-to-use-linux-screen/). Activate the conda environment (confirm you are in the environment if you are using screen).  When you are ready, run:
 
