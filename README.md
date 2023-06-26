@@ -198,6 +198,10 @@ This directory contains the standard error per job per sample. If, for some reas
 
 This directory documents the time it took each job to run. This could help inform future decisions about time allocations in SLURM should you need to adjust the time for a submitted job.
 
+### `01_genomes/`
+
+This directory contains the primary genome you want to align your data to as well as whatever genomes you want to screen your samples for using FastQ-Screen.
+
 ### `01_raw_sequences/`
 
 This directory contains the merged sequences for each sample, separated into forward (`{sample}_1.fq.gz`) and reverse (`{sample}_2.fq.gz`) reads.
