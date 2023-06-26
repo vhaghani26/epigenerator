@@ -1,6 +1,7 @@
 .snakemake/
 raw_data
 01_raw_sequences/
+01_genomes/
 02_trimmed/
 03_screened/
 04_aligned/
