@@ -69,7 +69,7 @@ rule trim:
 	log: "00_std_err_logs/02_trimmed_{sample}.log"
 	benchmark: "00_time_logs/02_trimmed_{sample}.txt"
 	resources:
-		mem_mb = 1024 * 50, # Last number is memory in GB
+		mem_mb = 1024 * 20, # Last number is memory in GB
 		time = 60 * 24 * 1, # Last number is days
 	shell: "trim_galore --paired --cores {threads} --2colour 20 --fastqc --clip_r1 10 --clip_r2 20 --three_prime_clip_r1 10 --three_prime_clip_r2 10 --output_dir 02_trimmed/ {input.r1} {input.r2} 2> {log}"
 		
@@ -87,7 +87,7 @@ rule screen:
 	log: "00_std_err_logs/03_screened_{sample}.log"
 	benchmark: "00_time_logs/03_screened_{sample}.txt"
 	resources:
-		mem_mb = 1024 * 50, # Last number is memory in GB
+		mem_mb = 1024 * 25, # Last number is memory in GB
 		time = 60 * 24 * 1, # Last number is days
 	shell: "fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r1} --outdir 03_screened 2> {log}"
 	
@@ -102,7 +102,7 @@ rule align:
 	log: "00_std_err_logs/04_aligned_{sample}.txt"
 	benchmark: "00_time_logs/04_aligned_{sample}.txt"
 	resources:
-		mem_mb = 1024 * 150, # Last number is memory in GB
+		mem_mb = 1024 * 100, # Last number is memory in GB
 		time = 60 * 24 * 2, # Last number is days
 	shell: """
 	bismark -n 1 --genome 01_genomes/{config[genome]}/ --multicore 6 -1 {input.r1} -2 {input.r2} 2> {log}
@@ -119,7 +119,7 @@ rule deduplicate:
 	log: "00_std_err_logs/05_deduplicated_{sample}.txt"
 	benchmark: "00_time_logs/05_deduplicated_{sample}.txt"
 	resources:
-		mem_mb = 1024 * 50, # Last number is memory in GB
+		mem_mb = 1024 * 25, # Last number is memory in GB
 		time = 60 * 24 * 1, # Last number is days
 	shell: """
 	deduplicate_bismark --bam --paired {input} 2> {log}
@@ -134,7 +134,7 @@ rule sort:
 	log: "00_std_err_logs/06_sorted_{sample}.txt"
 	benchmark: "00_time_logs/06_sorted_{sample}.txt"
 	resources:
-		mem_mb = 1024 * 50, # Last number is memory in GB
+		mem_mb = 1024 * 25, # Last number is memory in GB
 		time = 60 * 24 * 1, # Last number is days
 	shell: "picard SortSam INPUT={input} OUTPUT={output} SORT_ORDER=coordinate 2> {log}"
 
@@ -147,7 +147,7 @@ rule size_metrics:
 	log: "00_std_err_logs/07_size_metrics_{sample}.txt"
 	benchmark: "00_time_logs/07_size_metrics_{sample}.txt"
 	resources:
-		mem_mb = 1024 * 50, # Last number is memory in GB
+		mem_mb = 1024 * 25, # Last number is memory in GB
 		time = 60 * 24 * 1, # Last number is days
 	shell: "picard CollectInsertSizeMetrics INPUT={input} OUTPUT={output.ins} HISTOGRAM_FILE={output.hist} ASSUME_SORTED=TRUE 2> {log}"
 
@@ -158,7 +158,7 @@ rule nucleotide_coverage:
 	log: "00_std_err_logs/06_nt_coverage_{sample}.txt"
 	benchmark: "00_time_logs/06_nt_coverage_{sample}.txt"
 	resources:
-		mem_mb = 1024 * 50, # Last number is memory in GB
+		mem_mb = 1024 * 25, # Last number is memory in GB
 		time = 60 * 24 * 1, # Last number is days
 	shell: "bam2nuc --genome_folder 01_genomes/{config[genome]}/ {input} --dir 06_nt_coverage 2> {log}"
 
