@@ -72,7 +72,7 @@ rule trim:
 		mem_mb = 1024 * 50, # Last number is memory in GB
 		time = 60 * 24 * 1, # Last number is days
 	shell: "trim_galore --paired --cores {threads} --2colour 20 --fastqc --clip_r1 10 --clip_r2 20 --three_prime_clip_r1 10 --three_prime_clip_r2 10 --output_dir 02_trimmed/ {input.r1} {input.r2} 2> {log}"
-
+		
 rule screen:
 	message: "Screening samples for sample origin"
 	input:
@@ -105,7 +105,7 @@ rule align:
 		mem_mb = 1024 * 150, # Last number is memory in GB
 		time = 60 * 24 * 2, # Last number is days
 	shell: """
-	bismark -n 1 --genome /share/lasallelab/genomes/{config[genome]}/ --multicore 6 -1 {input.r1} -2 {input.r2} 2> {log}
+	bismark -n 1 --genome 01_genomes/{config[genome]}/ --multicore 6 -1 {input.r1} -2 {input.r2} 2> {log}
 	mv {wildcards.sample}_1_val_1_bismark_bt2_pe.bam 04_aligned/
 	mv {wildcards.sample}_1_val_1_bismark_bt2_PE_report.txt 04_aligned/
 	"""
@@ -160,7 +160,7 @@ rule nucleotide_coverage:
 	resources:
 		mem_mb = 1024 * 50, # Last number is memory in GB
 		time = 60 * 24 * 1, # Last number is days
-	shell: "bam2nuc --genome_folder /share/lasallelab/genomes/{config[genome]}/ {input} --dir 06_nt_coverage 2> {log}"
+	shell: "bam2nuc --genome_folder 01_genomes/{config[genome]}/ {input} --dir 06_nt_coverage 2> {log}"
 
 rule extract_methylation:
 	message: "Extracting methylation"
@@ -192,7 +192,7 @@ rule cytosine_reports:
 	resources:
 		mem_mb = 1024 * 50, # Last number is memory in GB
 		time = 60 * 24 * 2, # Last number is days
-	shell: "coverage2cytosine --dir 08_cytosine_reports --gzip --merge_CpG {input} --genome_folder /share/lasallelab/genomes/{config[genome]}/ --output {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz 2> {log}"
+	shell: "coverage2cytosine --dir 08_cytosine_reports --gzip --merge_CpG {input} --genome_folder 01_genomes/{config[genome]}/ --output {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz 2> {log}"
 	
 rule qc_report:
 	message: "Generating QC reports"
