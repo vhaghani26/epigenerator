@@ -30,4 +30,4 @@ scheduler: greedy
 use-conda: True
 conda-prefix: /share/lasallelab/programs/.conda/
 conda-frontend: conda
-cluster-status: 00_slurm/slurm/slurm-status.py
+cluster-status: 00_slurm/slurm-status.py

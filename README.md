@@ -121,58 +121,7 @@ For the above reasons, it is HIGHLY recommended that you instead run it via SLUR
 
 ### Running `CpG_Me2` on SLURM (Recommended)
 
-You will need to set up two files in order to run this workflow through slurm.
-
-**1. `slurm-status.py`**
-
-In your home directory, create a directory structure that reflects `~/.config/snakemake/slurm/`. Create a file called `slurm-status.py` in this directory and copy and paste the following into the file:
-
-```
-#!/usr/bin/env python
-
-# Example --cluster-status script from docs:
-# https://snakemake.readthedocs.io/en/stable/tutorial/additional_features.html#using-cluster-status
-
-import subprocess
-import sys
-
-jobid = sys.argv[-1]
-
-if jobid == "Submitted":
-    sys.stderr.write("smk-simple-slurm: Invalid job ID: %s\n"%(jobid))
-    sys.stderr.write("smk-simple-slurm: Did you remember to add the flag --parsable to your sbatch call?\n")
-    sys.exit(1)
-
-output = str(subprocess.check_output("sacct -j %s --format State --noheader | head -1 | awk '{print $1}'" % jobid, shell=True).strip())
-
-running_status=["PENDING", "CONFIGURING", "COMPLETING", "RUNNING", "SUSPENDED"]
-if "COMPLETED" in output:
-    print("success")
-elif any(r in output for r in running_status):
-    print("running")
-else:
-    print("failed")
-
-
-"""
-#!/usr/bin/env python3
-import subprocess
-import sys
-jobid = sys.argv[-1]
-output = str(subprocess.check_output("sacct -j %s --format State --noheader | head -1 | awk '{print $1}'" % jobid, shell=True).strip())
-running_status=["PENDING", "CONFIGURING", "COMPLETING", "RUNNING", "SUSPENDED", "PREEMPTED"]
-if "COMPLETED" in output:
-  print("success")
-elif any(r in output for r in running_status):
-  print("running")
-else:
-  print("failed")
-"""
-```
-
-**2. `config.yaml`**
-
-In the same directory as `slurm-status.py` (i.e. `~/.config/snakemake/slurm/`), create a file called `config.yaml`. You will need to change two things:
+In the directory `00_slurm/`, there is a file named `config.yaml`. You will need to modify two things:
 
 1. Update your SLURM partition for the **two** lines containing `--partition={partition}` by inputting a string. This will look something like `--partition=production` 
 2. Change the `conda_prefix` (the third to last line). It should look something like `/software/anaconda3/4.8.3/lssc0-linux/`, `/home/vhaghani/anaconda3/`, or `/share/lasallelab/programs/.conda/`
@@ -208,15 +157,15 @@ rerun-incomplete: True
 printshellcmds: True
 scheduler: greedy
 use-conda: True
-conda-prefix: {conda_prefix}
+conda-prefix: /share/lasallelab/programs/.conda/
 conda-frontend: conda
-cluster-status: ~/.config/snakemake/slurm/slurm-status.py
+cluster-status: 00_slurm/slurm-status.py
 ```
 
 Once these files are created, enter your project directory. Snakemake manages the submission of jobs, so wherever you run it, it will need to stay open. As such, I recommend running it in [screen](https://linuxize.com/post/how-to-use-linux-screen/). Activate the conda environment (confirm you are in the environment if you are using screen).  When you are ready, run:
 
 ```
-snakemake -s 02_CpG_Me2_PE --profile slurm 
+snakemake -s 02_CpG_Me2_PE --profile 00_slurm/
 ```
 
 ## Interpretting Outputs
