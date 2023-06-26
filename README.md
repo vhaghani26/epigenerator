@@ -157,7 +157,7 @@ rerun-incomplete: True
 printshellcmds: True
 scheduler: greedy
 use-conda: True
-conda-prefix: /share/lasallelab/programs/.conda/
+conda-prefix: {conda_prefix}
 conda-frontend: conda
 cluster-status: 00_slurm/slurm-status.py
 ```
