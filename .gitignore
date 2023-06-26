@@ -12,6 +12,8 @@ raw_data
 08_cytosine_reports/
 09_multiqc/
 00_std_err_logs/
+logs/
 00_time_logs/
 task_samples.yaml
 task_samples.yml
+
