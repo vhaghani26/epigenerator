@@ -1,7 +1,5 @@
 # Epigenerator: A Practical Workflow for Whole Genome Bisulfite Sequencing (WGBS) Analysis
 
-**Please note that currently, this is only compatible with the UC Davis Genome Center HPC. Updates are being made to make it more available for other users**
-
 ## Table of Contents
 
 * [Updates](#updates)
@@ -72,7 +70,7 @@ conda activate /share/lasallelab/programs/.conda/epigenerator
 
 ### Genome Preparation
 
-**1. `01_genomes/` Setup
+**1. `01_genomes/` Setup**
 
 Several steps require genomes for alignment. One of the steps, FastQ-Screen, allows you to align your reads to multiple genomes to check for sources of contamination. In your project directory, create a subdirectory called `01_genomes/`:
 
@@ -95,7 +93,7 @@ project_directory/
 
 Each subdirectory containing your genome of interest should contain the appropriate genome files as described by the [FastQ-Screen documentation](https://stevenwingett.github.io/FastQ-Screen/). Please do not worry about downloading or installing FastQ-Screen. The environment you created has all the software you will need. Activate the environment you created in the previous section, download the reference genome, and index the reference genome using [Bowtie2](https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#indexing-a-reference-genome).
 
-**2. `fastq_screen.conf` Setup
+**2. `fastq_screen.conf` Setup**
 
 In the directory `00_software`, locate and open the file `fastq_screen.conf`. Change lines 34+ to reflect the genomes and location of the genomes that you are aligning to. Provided paths can be absolute or relative paths.
 
