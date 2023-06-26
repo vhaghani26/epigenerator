@@ -123,46 +123,10 @@ For the above reasons, it is HIGHLY recommended that you instead run it via SLUR
 
 In the directory `00_slurm/`, there is a file named `config.yaml`. You will need to modify two things:
 
-1. Update your SLURM partition for the **two** lines containing `--partition={partition}` by inputting a string. This will look something like `--partition=production` 
+1. Update your SLURM partition for the **two** lines containing `--partition` by inputting a string. This will look something like `--partition=production` 
 2. Change the `conda_prefix` (the third to last line). It should look something like `/software/anaconda3/4.8.3/lssc0-linux/`, `/home/vhaghani/anaconda3/`, or `/share/lasallelab/programs/.conda/`
 
-```
-cluster:
-  mkdir -p logs/{rule}/ &&
-  sbatch
-    --cpus-per-task={threads}
-    --mem={resources.mem_mb}
-    --time={resources.time}
-    --job-name=epigenerator-{rule}
-    --ntasks={resources.nodes}
-    --nodes={resources.nodes}
-    --output=logs/{rule}/{jobid}.out
-    --error=logs/{rule}/{jobid}.err
-    --partition={partition}
-    --parsable
-default-resources:
-  - mem_mb=2000
-  - time=60
-  - partition={partition}
-  - threads=1
-  - nodes=1
-jobs: 50
-latency-wait: 60
-local-cores: 1
-restart-times: 3
-max-jobs-per-second: 100
-max-status-checks-per-second: 20
-keep-going: True
-rerun-incomplete: True
-printshellcmds: True
-scheduler: greedy
-use-conda: True
-conda-prefix: {conda_prefix}
-conda-frontend: conda
-cluster-status: 00_slurm/slurm-status.py
-```
-
-Once these files are created, enter your project directory. Snakemake manages the submission of jobs, so wherever you run it, it will need to stay open. As such, I recommend running it in [screen](https://linuxize.com/post/how-to-use-linux-screen/). Activate the conda environment (confirm you are in the environment if you are using screen).  When you are ready, run:
+Once you have updated `config.yaml`, go back to your project directory. Snakemake manages the submission of jobs, so wherever you run it, it will need to stay open. As such, I recommend running it in [screen](https://linuxize.com/post/how-to-use-linux-screen/). Activate the conda environment (confirm you are in the environment if you are using screen).  When you are ready, run:
 
 ```
 snakemake -s 02_CpG_Me2_PE --profile 00_slurm/
