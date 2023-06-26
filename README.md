@@ -8,6 +8,7 @@
 * [Project Set-Up](#project-set-up)
 	* [Setting Up Your Project Directory](#setting-up-your-project-directory)
 	* [Installation](#installation)
+	* [Genome Preparation](#genome-preparation)
 * [1. `FASTQ_Me2`](#1-fastq_me2)
 * [2. `CpG_Me2`](#2-cpg_me2)
 	* [Running `CpG_Me2` Locally](#running-cpg_me2-Locally)
@@ -47,7 +48,7 @@ cd {project_name}
 
 ### Installation
 
-Run the following command in your project directory. It will clone the conda environment with all dependencies needed in order to run the workflow outlined here. This creates an environment called `wgbs`. If you would like to change the name, feel free to do so where the command says `wgbs`. Please note that this may take quite a few minutes to run.
+Run the following command in your project directory. It will clone the conda environment with all dependencies needed in order to run the workflow outlined here. This creates an environment called `epigenerator`. If you would like to change the name, feel free to do so where the command says `epigenerator`. Please note that this may take quite a few minutes to run.
 
 ```
 conda env create -f 00_software/environment.yml --name epigenerator
@@ -69,6 +70,61 @@ The environment is already installed and ready in a shared space, so all you wil
 conda activate /share/lasallelab/programs/.conda/epigenerator
 ```
 
+### Genome Preparation
+
+**1. `01_genomes/` Setup
+
+Several steps require genomes for alignment. One of the steps, FastQ-Screen, allows you to align your reads to multiple genomes to check for sources of contamination. In your project directory, create a subdirectory called `01_genomes/`:
+
+```
+mkdir 01_genomes/
+```
+
+Within `01_genomes/`, create subdirectories corresponding to each genome of interest. The directory structure should look something like the following:
+
+```
+project_directory/
+	01_genomes/
+		hg38/
+		Lamba/
+		mm10/
+		PhiX/
+		rheMac10/
+		rn6/
+```
+
+Each subdirectory containing your genome of interest should contain the appropriate genome files as described by the [FastQ-Screen documentation](https://stevenwingett.github.io/FastQ-Screen/). Please do not worry about downloading or installing FastQ-Screen. The environment you created has all the software you will need. Activate the environment you created in the previous section, download the reference genome, and index the reference genome using [Bowtie2](https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#indexing-a-reference-genome).
+
+**2. `fastq_screen.conf` Setup
+
+In the directory `00_software`, locate and open the file `fastq_screen.conf`. Change lines 34+ to reflect the genomes and location of the genomes that you are aligning to. Provided paths can be absolute or relative paths.
+
+**For LaSalle Lab**
+
+Create `01_genomes/`:
+
+```
+mkdir 01_genomes
+```
+
+Change into the directory:
+
+```
+cd 01_genomes
+```
+
+Run the following commands to link our standard genome directories into this directory:
+
+```
+ln -s /share/lasallelab/genomes/hg38/ .
+ln -s /share/lasallelab/genomes/Lambda/ .
+ln -s /share/lasallelab/genomes/mm10/ .
+ln -s /share/lasallelab/genomes/PhiX/ .
+ln -s /share/lasallelab/genomes/rheMac10/ .
+ln -s /share/lasallelab/genomes/rn6/ .
+```
+
+You do not need to update `fastq_screen.conf`. 
 
 ## 1. `FASTQ_Me2`
 
