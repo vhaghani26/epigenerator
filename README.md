@@ -186,6 +186,29 @@ Once you have updated `config.yaml`, go back to your project directory. Snakemak
 snakemake -s 02_CpG_Me2_PE --profile 00_slurm/
 ```
 
+**For LaSalle Lab**
+
+There are some bugs with the way your home directory is mounted on the Genome Center cluster. This will result in Snakemake erroring out when it tries to cache files. To fix it, we will need to make some changes. Briefly, you are creating a cache directory within your project directory. Since this is in a shared lab space, it is properly mounted for use. You are giving full permissions to the cache directory to ensure that Snakemake can store files in the directory. Then, you are setting the Snakemake cache variable to the proper directory so Snakemake knows to use that directory for cache. After these changes are made, you can submit to SLURM. Please run the following in your project directory:
+
+```
+cd 00_slurm/
+mkdir .cache
+chmod -R 777 .cache
+cd ..
+```
+
+Change the path to whatever path you are using:
+
+```
+export SNAKEMAKE_OUTPUT_CACHE=/share/lasallelab/{your_directory}/{your_project}/00_slurm/.cache
+```
+
+Then run the following, ideally in screen:
+
+```
+snakemake -s 02_CpG_Me2_PE --profile 00_slurm/ --cache 00_slurm/.cache 
+```
+
 ## Interpretting Outputs
 
 The most important outputs you will find are `01_raw_sequences/` and `08_cytosine_reports/`. You can feel free to delete the intermediate files, but they are included for your reference in case something goes wrong when you try to run `CpG_Me2`. The `03_screened` and `09_multiqc` directories may also be good to keep so you can check on the qualities of your samples at various stages. Below is a description of each of the output directories and what is contained in each. Note that the numbers preceding the directory names are reflective of the order they were generated.
