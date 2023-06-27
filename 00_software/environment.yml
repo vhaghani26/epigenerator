@@ -1,4 +1,4 @@
-name: /share/lasallelab/programs/.conda/cpg_me2
+name: epigenerator
 channels:
   - conda-forge
   - bioconda
@@ -329,5 +329,5 @@ dependencies:
     - yarl==1.9.2
     - yte==1.5.1
     - zstandard==0.19.0
-prefix: /share/lasallelab/programs/.conda/cpg_me2
+prefix: /share/lasallelab/programs/.conda/epigenerator
 
