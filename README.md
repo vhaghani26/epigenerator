@@ -200,10 +200,10 @@ cd ..
 Change the path to whatever path you are using:
 
 ```
-export SNAKEMAKE_OUTPUT_CACHE=/share/lasallelab/{your_directory}/{your_project}/00_slurm/.cache
+SNAKEMAKE_OUTPUT_CACHE=/share/lasallelab/{your_directory}/{your_project}/00_slurm/.cache
 ```
 
-Then run the following, ideally in screen:
+Then run the following:
 
 ```
 snakemake -s 02_CpG_Me2_PE --profile 00_slurm/ --cache 00_slurm/.cache 
