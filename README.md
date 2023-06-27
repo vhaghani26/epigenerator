@@ -188,7 +188,7 @@ snakemake -s 02_CpG_Me2_PE --profile 00_slurm/
 
 **For LaSalle Lab**
 
-There are some bugs with the way your home directory is mounted on the Genome Center cluster. This will result in Snakemake erroring out when it tries to cache files. To fix it, we will need to make some changes. Briefly, you are creating a cache directory within your project directory. Since this is in a shared lab space, it is properly mounted for use. You are giving full permissions to the cache directory to ensure that Snakemake can store files in the directory. Then, you are setting the Snakemake cache variable to the proper directory so Snakemake knows to use that directory for cache. After these changes are made, you can submit to SLURM. Please run the following in your project directory:
+There are some bugs with the way your home directory is mounted on the Genome Center cluster. This will result in Snakemake erroring out when it tries to cache files. To fix it, we will need to make some changes. Briefly, you are creating a cache directory within your project directory. Since this is in a shared lab space, it is properly mounted for use. You are giving full permissions to the cache directory to ensure that Snakemake can store files in the directory. Then, you are setting the Snakemake cache variable to the proper directory so Snakemake knows to use that directory for cache. After these changes are made, you can submit to SLURM. Please run the following in your project directory (ideally in screen with your conda environment activated):
 
 ```
 cd 00_slurm/
