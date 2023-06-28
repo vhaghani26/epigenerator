@@ -114,6 +114,7 @@ cd 01_genomes
 Run the following commands to link our standard genome directories into this directory:
 
 ```
+ln -s /share/lasallelab/genomes/hg19/ .
 ln -s /share/lasallelab/genomes/hg38/ .
 ln -s /share/lasallelab/genomes/Lambda/ .
 ln -s /share/lasallelab/genomes/mm10/ .
