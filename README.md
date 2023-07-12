@@ -198,13 +198,16 @@ chmod -R 777 .cache
 cd ..
 ```
 
-Change the path to whatever path you are using:
+Change the paths to whatever path you are using and put the following in your `.bashrc` or `.profile` (or whatever you're using):
 
 ```
-SNAKEMAKE_OUTPUT_CACHE=/share/lasallelab/{your_directory}/{your_project}/00_slurm/.cache
+export SNAKEMAKE_OUTPUT_CACHE=/share/lasallelab/{your_directory}/{your_project}/00_slurm/.cache
+export XDG_CACHE_HOME=/share/lasallelab/{your_directory}/{your_project}/00_slurm/.cache
 ```
 
-Then run the following:
+Note that these will have to be updated every time you run `CpG_Me2`, but it is currently the only workaround I'm aware of for dealing with the issues the Genome Center cluster has.
+
+Then, run the following:
 
 ```
 snakemake -s 02_CpG_Me2_PE --profile 00_slurm/ --cache 00_slurm/.cache 
