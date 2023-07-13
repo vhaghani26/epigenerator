@@ -70,7 +70,7 @@ rule trim:
 	benchmark: "00_time_logs/02_trimmed_{sample}.txt"
 	resources:
 		mem_mb = 1024 * 15, # Last number is memory in GB
-		time = 60 * 24 * 1, # Last number is days
+		time = 60 * 24 * 2, # Last number is days
 	shell: "trim_galore --paired --cores {threads} --2colour 20 --fastqc --clip_r1 10 --clip_r2 20 --three_prime_clip_r1 10 --three_prime_clip_r2 10 --output_dir 02_trimmed/ {input.r1} {input.r2} 2> {log}"
 		
 rule screen:
@@ -88,7 +88,7 @@ rule screen:
 	benchmark: "00_time_logs/03_screened_{sample}.txt"
 	resources:
 		mem_mb = 1024 * 25, # Last number is memory in GB
-		time = 60 * 24 * 1, # Last number is days
+		time = 60 * 24 * 2, # Last number is days
 	shell: "fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r1} --outdir 03_screened 2> {log}"
 	
 rule align:
@@ -103,7 +103,7 @@ rule align:
 	benchmark: "00_time_logs/04_aligned_{sample}.txt"
 	resources:
 		mem_mb = 1024 * 100, # Last number is memory in GB
-		time = 60 * 24 * 2, # Last number is days
+		time = 60 * 24 * 4, # Last number is days
 	shell: """
 	bismark -n 1 --genome 01_genomes/{config[genome]}/ --multicore 6 -1 {input.r1} -2 {input.r2} 2> {log}
 	mv {wildcards.sample}_1_val_1_bismark_bt2_pe.bam 04_aligned/
@@ -120,7 +120,7 @@ rule deduplicate:
 	benchmark: "00_time_logs/05_deduplicated_{sample}.txt"
 	resources:
 		mem_mb = 1024 * 25, # Last number is memory in GB
-		time = 60 * 24 * 1, # Last number is days
+		time = 60 * 24 * 2, # Last number is days
 	shell: """
 	deduplicate_bismark --bam --paired {input} 2> {log}
 	mv {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplicated.bam 05_deduplicated/
@@ -135,7 +135,7 @@ rule sort:
 	benchmark: "00_time_logs/06_sorted_{sample}.txt"
 	resources:
 		mem_mb = 1024 * 25, # Last number is memory in GB
-		time = 60 * 24 * 1, # Last number is days
+		time = 60 * 24 * 2, # Last number is days
 	shell: "picard SortSam INPUT={input} OUTPUT={output} SORT_ORDER=coordinate 2> {log}"
 
 rule size_metrics:
@@ -148,7 +148,7 @@ rule size_metrics:
 	benchmark: "00_time_logs/07_size_metrics_{sample}.txt"
 	resources:
 		mem_mb = 1024 * 25, # Last number is memory in GB
-		time = 60 * 24 * 1, # Last number is days
+		time = 60 * 24 * 2, # Last number is days
 	shell: "picard CollectInsertSizeMetrics INPUT={input} OUTPUT={output.ins} HISTOGRAM_FILE={output.hist} ASSUME_SORTED=TRUE 2> {log}"
 
 rule nucleotide_coverage:
@@ -159,7 +159,7 @@ rule nucleotide_coverage:
 	benchmark: "00_time_logs/06_nt_coverage_{sample}.txt"
 	resources:
 		mem_mb = 1024 * 25, # Last number is memory in GB
-		time = 60 * 24 * 1, # Last number is days
+		time = 60 * 24 * 2, # Last number is days
 	shell: "bam2nuc --genome_folder 01_genomes/{config[genome]}/ {input} --dir 06_nt_coverage 2> {log}"
 
 rule extract_methylation:
@@ -178,7 +178,7 @@ rule extract_methylation:
 	benchmark: "00_time_logs/06_methylation_{sample}.txt"
 	resources:
 		mem_mb = 1024 * 50, # Last number is memory in GB
-		time = 60 * 24 * 2, # Last number is days
+		time = 60 * 24 * 3, # Last number is days
 	shell: "bismark_methylation_extractor --paired-end --gzip --comprehensive --merge_non_CpG --bedGraph --multicore 6 --buffer_size 34G {input} --output_dir 06_methylation/ 2> {log}"
 
 rule cytosine_reports:
@@ -191,7 +191,7 @@ rule cytosine_reports:
 	benchmark: "00_time_logs/08_cytosine_reports_{sample}.txt"
 	resources:
 		mem_mb = 1024 * 50, # Last number is memory in GB
-		time = 60 * 24 * 2, # Last number is days
+		time = 60 * 24 * 3, # Last number is days
 	shell: "coverage2cytosine --dir 08_cytosine_reports --gzip --merge_CpG {input} --genome_folder 01_genomes/{config[genome]}/ --output {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz 2> {log}"
 	
 rule qc_report:
@@ -204,7 +204,7 @@ rule qc_report:
 	benchmark: "00_time_logs/09_multiqc.txt"
 	resources:
 		mem_mb = 1024 * 50, # Last number is memory in GB
-		time = 60 * 24 * 1, # Last number is days
+		time = 60 * 24 * 2, # Last number is days
 	shell: 
 		"""
 		multiqc . --ignore raw_sequences --ignore 01_raw_sequences 2> {log}
