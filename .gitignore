@@ -15,6 +15,7 @@ raw_data
 00_std_err_logs/
 logs/
 00_time_logs/
+00_slurm/.cache/
 task_samples.yaml
 task_samples.yml
 
