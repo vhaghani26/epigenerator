@@ -18,4 +18,4 @@ logs/
 00_slurm/.cache/
 task_samples.yaml
 task_samples.yml
-
+*temp*
