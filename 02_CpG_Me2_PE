@@ -104,8 +104,9 @@ rule align:
 	resources:
 		mem_mb = 1024 * 150, # Last number is memory in GB
 		time = 60 * 24 * 14, # Last number is days
+        threads = 6,
 	shell: """
-	bismark -n 1 --genome 01_genomes/{config[genome]}/ --multicore 6 -1 {input.r1} -2 {input.r2} 2> {log}
+	bismark -n 1 --genome 01_genomes/{config[genome]}/ --multicore {resources.threads} -1 {input.r1} -2 {input.r2} 2> {log}
 	mv {wildcards.sample}_1_val_1_bismark_bt2_pe.bam 04_aligned/
 	mv {wildcards.sample}_1_val_1_bismark_bt2_PE_report.txt 04_aligned/
 	"""
