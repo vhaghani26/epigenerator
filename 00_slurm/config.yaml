@@ -20,7 +20,7 @@ default-resources:
 jobs: 50
 latency-wait: 60
 local-cores: 1
-restart-times: 3
+restart-times: 1
 max-jobs-per-second: 100
 max-status-checks-per-second: 20
 keep-going: True
