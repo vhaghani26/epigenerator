@@ -11,9 +11,11 @@
 * [2. `CpG_Me2`](#2-cpg_me2)
 	* [Running `CpG_Me2` Locally](#running-cpg_me2-Locally)
 	* [Running `CpG_Me2` on SLURM (Recommended)](#Running-CpG_Me2-on-SLURM-Recommended)
+* [3. `DMRichR`](#3-dmrichr)
+* [4. `Comethyl`](#4-comethyl)
 * [Interpretting Outputs](#Interpretting-Outputs)
 * [Acknowledgements](#acknowledgements)
-
+* [Citation](#citation)
 
 ## Updates
 
@@ -35,7 +37,7 @@ The original [CpG_Me](https://github.com/ben-laufer/CpG_Me), written by Dr. Ben 
 Clone the repository using your project name in the directory you plan to host the project:
 
 ```
-git clone https://github.com/vhaghani26/WGBS_workflow {project_name}
+git clone https://github.com/vhaghani26/epigenerator {project_name}
 ```
 
 Enter the directory
@@ -213,6 +215,14 @@ Then, run the following:
 snakemake -s 02_CpG_Me2_PE --profile 00_slurm/ --cache 00_slurm/.cache 
 ```
 
+## 3. `DMRichR`
+
+I am hoping to one day better incorporate `DMRichR` here, but in the meantime. please refer to Dr. Ben Laufer's [`DMRichR` package](https://github.com/ben-laufer/DMRichR) for further analysis. This package will aid in the identification of differentially methylated regions within your dataset. 
+
+## 4. `Comethyl`
+
+If you are interested in weighted region comethylation network analysis, please refer to Dr. Charles Mordaunt's ['Comethyl' package](https://github.com/cemordaunt/comethyl) for further analysis.
+
 ## Interpretting Outputs
 
 The most important outputs you will find are `01_raw_sequences/` and `08_cytosine_reports/`. You can feel free to delete the intermediate files, but they are included for your reference in case something goes wrong when you try to run `CpG_Me2`. The `03_screened` and `09_multiqc` directories may also be good to keep so you can check on the qualities of your samples at various stages. Below is a description of each of the output directories and what is contained in each. Note that the numbers preceding the directory names are reflective of the order they were generated.
@@ -280,3 +290,21 @@ This directory is generated when you use SLURM to run `CpG_Me2`. It contains the
 ## Acknowledgements
 
 This work was largely adapted from Dr. Ben Laufer's original [CpG_Me Program](https://github.com/ben-laufer/CpG_Me). These updates could not have been made without the help of Jules Mouat and Aron Mendiola.
+
+## Citation
+
+If you are using `epigenerator`, please cite the following (noting that it may be subject to change upon further publication): 
+
+* Laufer BI*, Neier KE*, Valenzuela AE, Yasui DH, Lein PJ, LaSalle JM. Placenta and Fetal Brain Share a Neurodevelopmental Disorder DNA Methylation Profile in a Mouse Model of Prenatal PCB Exposure. Cell Reports, 2022. doi: [10.1016/j.celrep.2022.110442](https://www.sciencedirect.com/science/article/pii/S2211124722001693?via%3Dihub)
+
+* Krueger F, Andrews SR. Bismark: a flexible aligner and methylation caller for Bisulfite-Seq applications. Bioinformatics, 2011. doi: [10.1093/bioinformatics/btr167](https://doi.org/10.1093/bioinformatics/btr167)
+
+* Matrin M. Cutadapt removes adapter sequences from high-throughput sequencing reads. EMBnet.journal, 2011. doi: [10.14806/ej.17.1.200](https://doi.org/10.14806/ej.17.1.200)
+
+* Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics, 2016. doi: [10.1093/bioinformatics/btw354](https://doi.org/10.1093/bioinformatics/btw354)
+
+* Haghani V, **Mouat J pending**. 2023. Epigenerator. GitHub. https://github.com/vhaghani26/epigenerator.
+
+If you are using `Comethyl`, also make sure to cite the following:
+
+* Mordaunt CE, Mouat JS, Schmidt RJ, and LaSalle JM. (2022) Comethyl: a network-based methylome approach to investigate the multivariate nature of health and disease. Briefings in Bioinformatics bbab554.
