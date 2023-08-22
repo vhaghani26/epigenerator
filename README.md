@@ -221,7 +221,7 @@ I am hoping to one day better incorporate `DMRichR` here, but in the meantime. p
 
 ## 4. `Comethyl`
 
-If you are interested in weighted region comethylation network analysis, please refer to Dr. Charles Mordaunt's ['Comethyl' package](https://github.com/cemordaunt/comethyl) for further analysis.
+If you are interested in weighted region comethylation network analysis, please refer to Dr. Charles Mordaunt's [`Comethyl` package](https://github.com/cemordaunt/comethyl) for further analysis.
 
 ## Interpretting Outputs
 
