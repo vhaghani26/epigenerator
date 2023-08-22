@@ -303,7 +303,7 @@ If you are using `epigenerator`, please cite the following (noting that it may b
 
 * Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics, 2016. doi: [10.1093/bioinformatics/btw354](https://doi.org/10.1093/bioinformatics/btw354)
 
-* Haghani V, **Mouat J pending**. 2023. Epigenerator. GitHub. https://github.com/vhaghani26/epigenerator.
+* Haghani V, Mouat J. 2023. Epigenerator. GitHub. https://github.com/vhaghani26/epigenerator.
 
 If you are using `Comethyl`, also make sure to cite the following:
 
