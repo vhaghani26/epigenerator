@@ -16,6 +16,7 @@ raw_data
 logs/
 00_time_logs/
 00_slurm/.cache/
+00_slurm/DMRichR_Kostas.slurm
 task_samples.yaml
 task_samples.yml
 *temp*
