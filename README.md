@@ -219,6 +219,8 @@ snakemake -s 02_CpG_Me2_PE --profile 00_slurm/ --cache 00_slurm/.cache
 
 I am hoping to one day better incorporate `DMRichR` here, but in the meantime. please refer to Dr. Ben Laufer's [`DMRichR` package](https://github.com/ben-laufer/DMRichR) for further analysis. This package will aid in the identification of differentially methylated regions within your dataset. 
 
+If you are interested in running `DMRichR` on SLURM, there is a template SLURM script in `00_slurm/` titled `DMRichR_SLURM_template.sh`. If you are using it, please ensure that you change the appropriate variables, including the `#SBATCH` parameter section and the path to the `DM.R` script.
+
 ## 4. `Comethyl`
 
 If you are interested in weighted region comethylation network analysis, please refer to Dr. Charles Mordaunt's [`Comethyl` package](https://github.com/cemordaunt/comethyl) for further analysis.
