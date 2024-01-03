@@ -89,7 +89,7 @@ rule screen:
 	resources:
 		mem_mb = 1024 * 25, # Last number is memory in GB
 		time = 60 * 24 * 2, # Last number is days
-	shell: "fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r1} --outdir 03_screened 2> {log}"
+	shell: "fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r2} --outdir 03_screened 2> {log}"
 	
 rule align:
 	message: "Aligning bisfulite reads"
