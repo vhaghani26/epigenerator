@@ -195,7 +195,7 @@ files_per_samp = {}
 for samp in sample_ids:
     files_per_samp[samp] = []
     for key, value in raw_files.items():
-        if key.startswith(samp):                
+        if key.startswith(f'{samp}{samp_id_delim}'):                
             files_per_samp[samp].append(value)
 
 # Save space
@@ -210,15 +210,16 @@ ready_or_not = input("Are you ready to merge lanes? (y/n) ")
 if ready_or_not.lower() == "no" or ready_or_not.lower() == "n":
     print("Please try again when you're ready.")
     sys.exit()
+print("\n")
 
 # Make 01_raw_sequences directory
-print("Preparing to merge lanes")
+print("Preparing to merge lanes\n")
 isExist = os.path.exists("01_raw_sequences")
 if not isExist:
     os.system("mkdir 01_raw_sequences")
 
 # Create separated forward and reverse reads
-print("Parsing forward vs. reverse reads for lanes")
+print("Parsing forward vs. reverse reads for lanes\n")
 for_vs_rev = {}
 for key, value in files_per_samp.items():
     for_vs_rev[key] = {"Forward": [], "Reverse": []}
@@ -249,18 +250,18 @@ for key, value in files_per_samp.items():
             print("3. Could not determine forward vs. reverse reads. Please consider renaming your files and try again.")
             sys.exit()
 
-# Confirm merging looks correct
+# Confirm merging looks correct (edited for renaming instead of merging)
 for key, value in for_vs_rev.items():
-   for direction, files in value.items():
-       if direction == "Forward":
-           print("cat", " ".join(for_vs_rev[key]["Forward"]), f"> 01_raw_sequences/{key}_1.fq.gz")
-       elif direction == "Reverse":
-           print("cat", " ".join(for_vs_rev[key]["Reverse"]), f"> 01_raw_sequences/{key}_2.fq.gz")
-       else:
-           print("Could not determine forward vs. reverse reads. Please consider renaming your files and try again.")
-           sys.exit()
+    print(f"Sample: {key}")
+    print("Forward reads:")
+    for forward_read in value["Forward"]:
+        print("\t", forward_read)
+    print("Reverse reads:")
+    for reverse_read in value["Reverse"]:
+        print("\t", reverse_read)
+    print()
 
-proceed = input("Do the above merges look correct? (y/n) ")
+proceed = input("Do the files look correctly parsed? (y/n) ")
 if proceed.lower() == "no" or proceed.lower() == "n":
     print("Please consider renaming your files such that the forward and reverse strands are more clear and try again.")
     sys.exit()
@@ -270,8 +271,12 @@ print("Merging lanes")
 for key, value in for_vs_rev.items():
    for direction, files in value.items():
        if direction == "Forward":
-           os.system(f"cat {' '.join(for_vs_rev[key]['Forward'])} > 01_raw_sequences/{key}_1.fq.gz")
+            source_files = " ".join(for_vs_rev[key]["Forward"])
+            destination_file = f"{key}_1.fq.gz"
+            os.system(f"cat {source_files} > 01_raw_sequences/{destination_file}")
        if direction == "Reverse":
-           os.system(f"cat {' '.join(for_vs_rev[key]['Reverse'])} > 01_raw_sequences/{key}_2.fq.gz")
+            source_files = " ".join(for_vs_rev[key]["Reverse"])
+            destination_file = f"{key}_2.fq.gz"
+            os.system(f"cat {source_files} > 01_raw_sequences/{destination_file}")
            
 print("Done merging lanes!")
