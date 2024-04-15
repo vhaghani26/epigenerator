@@ -153,7 +153,7 @@ python3 01_FASTQ_Me2.py
 
 ## 2. `CpG_Me2`
 
-`CpG_Me2` carries out a number of steps to process your sample, which can be seen in the figure below. Please note that this pipeline does alignments for PBAT-Seq libaries (post-bisulfite adapter tagging). If your library was not prepared this way, open the `02_CpG_Me2_PE` script and remove the `--pbat` flag from line 109.
+`CpG_Me2` carries out a number of steps to process your sample, which can be seen in the figure below.
 
 ![Workflow](https://github.com/ben-laufer/CpG_Me/blob/master/Examples/CpG_Me_Flowchart.png)
 
