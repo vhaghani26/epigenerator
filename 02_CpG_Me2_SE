@@ -34,9 +34,6 @@ rule all:
 		expand("06_methylation/CpG_context_{sample}_1_trimmed_bismark_bt2.deduplicated.txt.gz", sample=config["samples"]), 
 		expand("06_methylation/{sample}_1_trimmed_bismark_bt2.deduplicated.bedGraph.gz", sample=config["samples"]), 
 		expand("06_methylation/{sample}_1_trimmed_bismark_bt2.deduplicated.bismark.cov.gz", sample=config["samples"]), 
-		expand("06_methylation/{sample}_1_trimmed_bismark_bt2.deduplicated.M-bias_R1.png", sample=config["samples"]), 
-		expand("06_methylation/{sample}_1_trimmed_bismark_bt2.deduplicated.M-bias_R2.png", sample=config["samples"]), 
-		expand("06_methylation/{sample}_1_trimmed_bismark_bt2.deduplicated.M-bias.txt", sample=config["samples"]), 
 		expand("06_methylation/{sample}_1_trimmed_bismark_bt2.deduplicated_splitting_report.txt", sample=config["samples"]), 
 		expand("06_methylation/Non_CpG_context_{sample}_1_trimmed_bismark_bt2.deduplicated.txt.gz", sample=config["samples"]),		
 		# Rule cytosine_reports
@@ -141,9 +138,6 @@ rule extract_methylation:
 		"06_methylation/CpG_context_{sample}_1_trimmed_bismark_bt2.deduplicated.txt.gz",
 		"06_methylation/{sample}_1_trimmed_bismark_bt2.deduplicated.bedGraph.gz",
 		"06_methylation/{sample}_1_trimmed_bismark_bt2.deduplicated.bismark.cov.gz",
-		"06_methylation/{sample}_1_trimmed_bismark_bt2.deduplicated.M-bias_R1.png",
-		"06_methylation/{sample}_1_trimmed_bismark_bt2.deduplicated.M-bias_R2.png",
-		"06_methylation/{sample}_1_trimmed_bismark_bt2.deduplicated.M-bias.txt",
 		"06_methylation/{sample}_1_trimmed_bismark_bt2.deduplicated_splitting_report.txt",
 		"06_methylation/Non_CpG_context_{sample}_1_trimmed_bismark_bt2.deduplicated.txt.gz"
 	log: "00_std_err_logs/06_methylation_{sample}.txt"
