@@ -62,7 +62,7 @@ rule trim:
 	resources:
 		mem_mb = 1024 * 15, # Last number is memory in GB
 		time = 60 * 24 * 2, # Last number is days
-	shell: "trim_galore --cores {threads} --2colour 20 --fastqc --clip_r1 10 --clip_r2 20 --three_prime_clip_r1 10 --three_prime_clip_r2 10 --output_dir 02_trimmed/ {input.r1} 2> {log}"
+	shell: "trim_galore --cores {threads} --quality 20 --fastqc --clip_r1 7 --three_prime_clip_r1 10 --output_dir 02_trimmed/ {input.r1} 2> {log}"
 		
 rule screen:
 	message: "Screening samples for sample origin"
