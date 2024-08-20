@@ -27,10 +27,7 @@ rule all:
 		expand("05_deduplicated/{sample}_1_trimmed_bismark_bt2.deduplicated.bam", sample=config["samples"]),
 		expand("05_deduplicated/{sample}_1_trimmed_bismark_bt2.deduplication_report.txt", sample=config["samples"]),
 		# Rule sort
-		expand("06_sorted/{sample}_1_trimmed_bismark_bt2.deduplicated.sorted.bam", sample=config["samples"]),
-		# Rule size_metrics
-		expand("07_size_metrics/{sample}_1_trimmed_bismark_bt2.deduplicated.sorted.bam.insert.txt", sample=config["samples"]),
-		expand("07_size_metrics/{sample}_1_trimmed_bismark_bt2.deduplicated.sorted.bam.histogram.pdf", sample=config["samples"]),		 
+		expand("06_sorted/{sample}_1_trimmed_bismark_bt2.deduplicated.sorted.bam", sample=config["samples"]),	 
 		# Rule nucleotide_coverage
 		expand("06_nt_coverage/{sample}_1_trimmed_bismark_bt2.deduplicated.nucleotide_stats.txt", sample=config["samples"]), 
 		# Rule extract_methylation
@@ -125,19 +122,6 @@ rule sort:
 		mem_mb = 1024 * 25, # Last number is memory in GB
 		time = 60 * 24 * 2, # Last number is days
 	shell: "picard SortSam INPUT={input} OUTPUT={output} SORT_ORDER=coordinate 2> {log}"
-
-rule size_metrics:
-	message: "Collecting insert size metrics"
-	input: "06_sorted/{sample}_1_trimmed_bismark_bt2.deduplicated.sorted.bam"
-	output: 
-		ins = "07_size_metrics/{sample}_1_trimmed_bismark_bt2.deduplicated.sorted.bam.insert.txt",
-		hist = "07_size_metrics/{sample}_1_trimmed_bismark_bt2.deduplicated.sorted.bam.histogram.pdf"
-	log: "00_std_err_logs/07_size_metrics_{sample}.txt"
-	benchmark: "00_time_logs/07_size_metrics_{sample}.txt"
-	resources:
-		mem_mb = 1024 * 25, # Last number is memory in GB
-		time = 60 * 24 * 2, # Last number is days
-	shell: "picard CollectInsertSizeMetrics INPUT={input} OUTPUT={output.ins} HISTOGRAM_FILE={output.hist} ASSUME_SORTED=TRUE 2> {log}"
 
 rule nucleotide_coverage:
 	message: "Assessing nucleotide coverage"
