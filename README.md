@@ -157,7 +157,9 @@ python3 01_FASTQ_Me2.py
 
 ![Workflow](https://github.com/ben-laufer/CpG_Me/blob/master/Examples/CpG_Me_Flowchart.png)
 
-There are two ways that you can run `CpG_Me2`. Note that **02_CpG_Me2_PE is for use with paired-end data and 02_CpG_Me2_SE is for use with single-end data**. Please substitute the script names as needed in the below commands. I have gone with the deafult of paired-end data in this tutorial since paired-end data is more commonly used than single-end data in our lab.
+Note that **02_CpG_Me2_PE is for use with paired-end data and 02_CpG_Me2_SE is for use with single-end data**. Please substitute the script names as needed in the below commands. I have gone with the deafult of paired-end data in this tutorial since paired-end data is more commonly used than single-end data in our lab.
+
+There are two ways that you can run `CpG_Me2`. 
 
 ### Running `CpG_Me2` Locally
 
