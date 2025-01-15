@@ -67,7 +67,7 @@ Run everything downstream of this point in this conda environment. Note that you
 The environment is already installed and ready in a shared space, so all you will need to do is run:
 
 ```
-conda activate /share/lasallelab/programs/.conda/epigenerator
+conda activate /quobyte/lasallegrp/programs/.conda/epigenerator
 ```
 
 ### Genome Preparation
@@ -116,13 +116,13 @@ cd 01_genomes
 Run the following commands to link our standard genome directories into this directory:
 
 ```
-ln -s /share/lasallelab/genomes/hg19 .
-ln -s /share/lasallelab/genomes/hg38 .
-ln -s /share/lasallelab/genomes/Lambda .
-ln -s /share/lasallelab/genomes/mm10 .
-ln -s /share/lasallelab/genomes/PhiX .
-ln -s /share/lasallelab/genomes/rheMac10 .
-ln -s /share/lasallelab/genomes/rn6 .
+ln -s /quobyte/lasallegrp/genomes/hg19 .
+ln -s /quobyte/lasallegrp/genomes/hg38 .
+ln -s /quobyte/lasallegrp/genomes/Lambda .
+ln -s /quobyte/lasallegrp/genomes/mm10 .
+ln -s /quobyte/lasallegrp/genomes/PhiX .
+ln -s /quobyte/lasallegrp/genomes/rheMac10 .
+ln -s /quobyte/lasallegrp/genomes/rn6 .
 ```
 
 You do not need to update `fastq_screen.conf`. 
@@ -183,7 +183,7 @@ For the above reasons, it is HIGHLY recommended that you instead run it via SLUR
 In the directory `00_slurm/`, there is a file named `config.yaml`. You will need to modify two things:
 
 1. Update your SLURM partition for the **two** lines (line 12 and line 17) containing `--partition` by inputting a string. This will look something like `--partition=production` 
-2. Change the `conda_prefix` (line 31). It should look something like `/software/anaconda3/4.8.3/lssc0-linux/`, `/home/vhaghani/anaconda3/`, or `/share/lasallelab/programs/.conda/`
+2. Change the `conda_prefix` (line 31). It should look something like `/software/anaconda3/4.8.3/lssc0-linux/`, `/home/vhaghani/anaconda3/`, or `/quobyte/lasallegrp/programs/.conda/`
 
 Once you have updated `config.yaml`, go back to your project directory. Snakemake manages the submission of jobs, so wherever you run it, it will need to stay open. As such, I recommend running it in [screen](https://linuxize.com/post/how-to-use-linux-screen/). Activate the conda environment (confirm you are in the environment if you are using screen).  When you are ready, run:
 
@@ -205,8 +205,8 @@ cd ..
 Change the paths to whatever path you are using and put the following in your `.bashrc` or `.profile` (or whatever you're using):
 
 ```
-export SNAKEMAKE_OUTPUT_CACHE=/share/lasallelab/{your_directory}/{your_project}/00_slurm/.cache
-export XDG_CACHE_HOME=/share/lasallelab/{your_directory}/{your_project}/00_slurm/.cache
+export SNAKEMAKE_OUTPUT_CACHE=/quobyte/lasallegrp/{your_directory}/{your_project}/00_slurm/.cache
+export XDG_CACHE_HOME=/quobyte/lasallegrp/{your_directory}/{your_project}/00_slurm/.cache
 ```
 
 Note that these will have to be updated every time you run `CpG_Me2`, but it is currently the only workaround I'm aware of for dealing with the issues the Genome Center cluster has.

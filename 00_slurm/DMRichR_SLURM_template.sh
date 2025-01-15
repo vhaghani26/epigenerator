@@ -35,7 +35,7 @@ module load homer
 
 call="Rscript \
 --vanilla \
-/share/lasallelab/programs/DMRichR/DM.R \
+/quobyte/lasallegrp/programs/DMRichR/DM.R \
 --genome hg38 \
 --coverage 1 \
 --perGroup '0.75' \

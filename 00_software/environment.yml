@@ -268,4 +268,3 @@ dependencies:
       - wheel==0.38.4
       - yte==1.5.1
       - zipp==3.13.0
-prefix: /share/korflab/home/viki/anaconda3/epigenerator
