@@ -9,12 +9,12 @@ cluster:
     --nodes={resources.nodes}
     --output=logs/{rule}/{jobid}.out
     --error=logs/{rule}/{jobid}.err
-    --partition=production
+    --partition=high
     --parsable
 default-resources:
   - mem_mb=2000
   - time=60
-  - partition=production
+  - partition=high
   - threads=1
   - nodes=1
 jobs: 50
