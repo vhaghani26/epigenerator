@@ -87,29 +87,27 @@ rule screen:
 	log: "00_std_err_logs/03_screened_{sample}.log"
 	benchmark: "00_time_logs/03_screened_{sample}.txt"
 	resources:
-		mem_mb = 1024 * 15, # Last number is memory in GB
+		mem_mb = 1024 * 25, # Last number is memory in GB
 		time = 60 * 24 * 2, # Last number is days
 	shell: "fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r2} --outdir 03_screened 2> {log}"
 	
 rule align:
-	message: "Aligning bisfulite reads"
-	input:
-		r1 = "02_trimmed/{sample}_1_val_1.fq.gz",
-		r2 = "02_trimmed/{sample}_2_val_2.fq.gz"
-	output: 
-		out1 = "04_aligned/{sample}_1_val_1_bismark_bt2_pe.bam",
-		out2 = "04_aligned/{sample}_1_val_1_bismark_bt2_PE_report.txt"
-	log: "00_std_err_logs/04_aligned_{sample}.txt"
-	benchmark: "00_time_logs/04_aligned_{sample}.txt"
-	threads: 6
-	resources:
-		mem_mb = 1024 * 75, # Last number is memory in GB
-		time = 60 * 24 * 14, # Last number is days
-	shell: """
-	bismark -n 1 --genome 01_genomes/{config[genome]}/ --multicore {threads} -1 {input.r1} -2 {input.r2} 2> {log}
-	mv {wildcards.sample}_1_val_1_bismark_bt2_pe.bam 04_aligned/
-	mv {wildcards.sample}_1_val_1_bismark_bt2_PE_report.txt 04_aligned/
-	"""
+    message: "Aligning bisfulite reads"
+    input:
+        r1 = "02_trimmed/{sample}_1_val_1.fq.gz",
+        r2 = "02_trimmed/{sample}_2_val_2.fq.gz"
+    output: 
+        out1 = "04_aligned/{sample}_1_val_1_bismark_bt2_pe.bam",
+        out2 = "04_aligned/{sample}_1_val_1_bismark_bt2_PE_report.txt"
+    log: "00_std_err_logs/04_aligned_{sample}.txt"
+    benchmark: "00_time_logs/04_aligned_{sample}.txt"
+    threads: 6
+    resources:
+        mem_mb = 1024 * 125, # Last number is memory in GB
+        time = 60 * 24 * 7, # Last number is days
+	account = "genome-center-grp",
+	partition = "high"
+    shell: "bismark -n 1 --genome 01_genomes/{config[genome]}/ --multicore {threads} --dovetail --score_min L,0,-0.2 --gzip --unmapped -o 04_aligned/ -1 {input.r1} -2 {input.r2} 2> {log}"
 
 rule deduplicate:
 	message: "Removing PCR duplicates"
