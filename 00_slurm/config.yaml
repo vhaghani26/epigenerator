@@ -9,11 +9,13 @@ cluster:
     --nodes={resources.nodes}
     --output=logs/{rule}/{jobid}.out
     --error=logs/{rule}/{jobid}.err
-    --partition=high
+    --partition={resources.partition}
+    --account={resources.account}
     --parsable
 default-resources:
   - mem_mb=2000
   - time=60
+  - account=lasallegrp
   - partition=high
   - threads=1
   - nodes=1
