@@ -1,96 +1,96 @@
-#!/bin/bash python3 
+#!/usr/bin/env python3
 
+import glob
 import os
 
 # Assign wildcard sample names
 configfile: "task_samples.yaml"
 
-# Assign wildcard constraints
-wildcard_constraints:
-	sample='[a-zA-Z0-9]+'
-	
+# Collect BAM files for each sample
+def get_bam_files(wildcards):
+    sample_id = wildcards.sample_id
+    pattern = f"04_aligned/{sample_id}_*_bismark_bt2_pe.bam"
+    bam_files = sorted(glob.glob(pattern))
+    if not bam_files:
+        raise ValueError(f"No BAM files found for sample ID {sample_id} with pattern {pattern}")
+    return bam_files
+
+# Function to get sample IDs from existing BAM files
+def get_sample_ids():
+    bam_files = glob.glob("04_aligned/*_bismark_bt2_pe.bam")
+    sample_ids = list(set([os.path.basename(f).split('_')[0] for f in bam_files]))
+    return sample_ids
+
+# Function to get final outputs for multiQC
+def get_final_outputs(wildcards=None):
+    sample_ids = get_sample_ids()
+    return expand("08_cytosine_reports/{sample_id}_merged_name_sorted.deduplicated.bismark.cov.gz.CpG_report.txt.gz",
+                sample_id=sample_ids)
+
 rule all:
-	input:
-		# Rule trim
-		expand("02_trimmed/{sample}_1.fq.gz_trimming_report.txt", sample=config["samples"]),
-		expand("02_trimmed/{sample}_1_val_1_fastqc.html", sample=config["samples"]),
-		expand("02_trimmed/{sample}_1_val_1_fastqc.zip", sample=config["samples"]),
-		expand("02_trimmed/{sample}_1_val_1.fq.gz", sample=config["samples"]),
-		expand("02_trimmed/{sample}_2.fq.gz_trimming_report.txt", sample=config["samples"]),
-		expand("02_trimmed/{sample}_2_val_2_fastqc.html", sample=config["samples"]),
-		expand("02_trimmed/{sample}_2_val_2_fastqc.zip", sample=config["samples"]),
-		expand("02_trimmed/{sample}_2_val_2.fq.gz", sample=config["samples"]),
-		# Rule screen
-		expand("03_screened/{sample}_1_val_1_screen.bisulfite_orientation.png", sample=config["samples"]),
-		expand("03_screened/{sample}_1_val_1_screen.html", sample=config["samples"]),
-		expand("03_screened/{sample}_1_val_1_screen.png", sample=config["samples"]),
-		expand("03_screened/{sample}_1_val_1_screen.txt", sample=config["samples"]),
-		# Rule align
-		expand("04_aligned/{sample}_1_val_1_bismark_bt2_pe.bam", sample=config["samples"]),
-		expand("04_aligned/{sample}_1_val_1_bismark_bt2_PE_report.txt", sample=config["samples"]),
-		# Rule deduplicate
-		expand("05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam", sample=config["samples"]),
-		expand("05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplication_report.txt", sample=config["samples"]),
-		# Rule sort
-		expand("06_sorted/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam", sample=config["samples"]),
-		# Rule size_metrics
-		expand("07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.insert.txt", sample=config["samples"]),
-		expand("07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.histogram.pdf", sample=config["samples"]),		 
-		# Rule nucleotide_coverage
-		expand("06_nt_coverage/{sample}_1_val_1_bismark_bt2_pe.deduplicated.nucleotide_stats.txt", sample=config["samples"]), 
-		# Rule extract_methylation
-		expand("06_methylation/CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz", sample=config["samples"]), 
-		expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz", sample=config["samples"]), 
-		expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz", sample=config["samples"]), 
-		expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R1.png", sample=config["samples"]), 
-		expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R2.png", sample=config["samples"]), 
-		expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt", sample=config["samples"]), 
-		expand("06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt", sample=config["samples"]), 
-		expand("06_methylation/Non_CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz", sample=config["samples"]),		
-		# Rule cytosine_reports
-		expand("08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz", sample=config["samples"]),
-		# Rule qc_report
-		"09_multiqc/multiqc_report.html"
+    input:
+        # Part 1 files (based on unmerged data)
+        expand("02_trimmed/{sample}_1.fq.gz_trimming_report.txt", sample=config["samples"]),
+        expand("02_trimmed/{sample}_1_val_1_fastqc.html", sample=config["samples"]),
+        expand("02_trimmed/{sample}_1_val_1_fastqc.zip", sample=config["samples"]),
+        expand("02_trimmed/{sample}_1_val_1.fq.gz", sample=config["samples"]),
+        expand("02_trimmed/{sample}_2.fq.gz_trimming_report.txt", sample=config["samples"]),
+        expand("02_trimmed/{sample}_2_val_2_fastqc.html", sample=config["samples"]),
+        expand("02_trimmed/{sample}_2_val_2_fastqc.zip", sample=config["samples"]),
+        expand("02_trimmed/{sample}_2_val_2.fq.gz", sample=config["samples"]),
+        expand("03_screened/{sample}_1_val_1_screen.bisulfite_orientation.png", sample=config["samples"]),
+        expand("03_screened/{sample}_1_val_1_screen.html", sample=config["samples"]),
+        expand("03_screened/{sample}_1_val_1_screen.png", sample=config["samples"]),
+        expand("03_screened/{sample}_1_val_1_screen.txt", sample=config["samples"]),
+        expand("04_aligned/{sample}_1_val_1_bismark_bt2_pe.bam", sample=config["samples"]),
+        expand("04_aligned/{sample}_1_val_1_bismark_bt2_PE_report.txt", sample=config["samples"]),
+        # Part 2 files (determined after checkpoint based on data merging)
+        get_final_outputs(),
+        "09_multiqc/multiqc_report.html"
 
 rule trim:
-	message: "Trimming samples"
-	input:
-		r1 = "01_raw_sequences/{sample}_1.fq.gz",
-		r2 = "01_raw_sequences/{sample}_2.fq.gz",
-	output:
-		out1 = "02_trimmed/{sample}_1.fq.gz_trimming_report.txt",
-		out2 = "02_trimmed/{sample}_1_val_1_fastqc.html",
-		out3 = "02_trimmed/{sample}_1_val_1_fastqc.zip",
-		out4 = "02_trimmed/{sample}_1_val_1.fq.gz",
-		out5 = "02_trimmed/{sample}_2.fq.gz_trimming_report.txt",
-		out6 = "02_trimmed/{sample}_2_val_2_fastqc.html",
-		out7 = "02_trimmed/{sample}_2_val_2_fastqc.zip",
-		out8 = "02_trimmed/{sample}_2_val_2.fq.gz"
-	log: "00_std_err_logs/02_trimmed_{sample}.log"
-	benchmark: "00_time_logs/02_trimmed_{sample}.txt"
-	resources:
-		mem_mb = 1024 * 5, # Last number is memory in GB
-		time = 60 * 24 * 2, # Last number is days
-	shell: "trim_galore --paired --cores {threads} --2colour 20 --fastqc --clip_r1 10 --clip_r2 20 --three_prime_clip_r1 10 --three_prime_clip_r2 10 --output_dir 02_trimmed/ {input.r1} {input.r2} 2> {log}"
-		
+    message: "Trimming samples"
+    input:
+        r1 = "01_raw_sequences/{sample}_1.fq.gz",
+        r2 = "01_raw_sequences/{sample}_2.fq.gz",
+    output:
+        out1 = "02_trimmed/{sample}_1.fq.gz_trimming_report.txt",
+        out2 = "02_trimmed/{sample}_1_val_1_fastqc.html",
+        out3 = "02_trimmed/{sample}_1_val_1_fastqc.zip",
+        out4 = "02_trimmed/{sample}_1_val_1.fq.gz",
+        out5 = "02_trimmed/{sample}_2.fq.gz_trimming_report.txt",
+        out6 = "02_trimmed/{sample}_2_val_2_fastqc.html",
+        out7 = "02_trimmed/{sample}_2_val_2_fastqc.zip",
+        out8 = "02_trimmed/{sample}_2_val_2.fq.gz"
+    log: "00_std_err_logs/02_trimmed_{sample}.log"
+    benchmark: "00_time_logs/02_trimmed_{sample}.txt"
+    resources:
+        mem_mb = 1024 * 15, # Last number is memory in GB
+        time = 60 * 24 * 2, # Last number is days
+        #account = "publicgrp", # Suggested account for LaSalle Lab
+        #partition = "low", # Suggested partition for LaSalle Lab
+    shell: "trim_galore --paired --cores {threads} --2colour 20 --fastqc --clip_r1 10 --clip_r2 20 --three_prime_clip_r1 10 --three_prime_clip_r2 10 --output_dir 02_trimmed/ {input.r1} {input.r2} 2> {log}"
+        
 rule screen:
-	message: "Screening samples for sample origin"
-	input:
-		conf = "00_software/fastq_screen.conf",
-		r1 = "02_trimmed/{sample}_1_val_1.fq.gz",
-		r2 = "02_trimmed/{sample}_2_val_2.fq.gz"
-	output: 
-		out1 = "03_screened/{sample}_1_val_1_screen.bisulfite_orientation.png",
-		out2 = "03_screened/{sample}_1_val_1_screen.html",
-		out3 = "03_screened/{sample}_1_val_1_screen.png",
-		out4 = "03_screened/{sample}_1_val_1_screen.txt"
-	log: "00_std_err_logs/03_screened_{sample}.log"
-	benchmark: "00_time_logs/03_screened_{sample}.txt"
-	resources:
-		mem_mb = 1024 * 25, # Last number is memory in GB
-		time = 60 * 24 * 2, # Last number is days
-	shell: "fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r2} --outdir 03_screened 2> {log}"
-	
+    message: "Screening samples for sample origin"
+    input:
+        conf = "00_software/fastq_screen.conf",
+        r1 = "02_trimmed/{sample}_1_val_1.fq.gz",
+        r2 = "02_trimmed/{sample}_2_val_2.fq.gz"
+    output: 
+        out1 = "03_screened/{sample}_1_val_1_screen.bisulfite_orientation.png",
+        out2 = "03_screened/{sample}_1_val_1_screen.html",
+        out3 = "03_screened/{sample}_1_val_1_screen.png",
+        out4 = "03_screened/{sample}_1_val_1_screen.txt"
+    log: "00_std_err_logs/03_screened_{sample}.log"
+    benchmark: "00_time_logs/03_screened_{sample}.txt"
+    resources:
+        mem_mb = 1024 * 25, # Last number is memory in GB
+        time = 60 * 24 * 2, # Last number is days
+        #account = "publicgrp", # Suggested account for LaSalle Lab
+        #partition = "low", # Suggested partition for LaSalle Lab
+    shell: "fastq_screen --conf {input.conf} --bisulfite {input.r1} {input.r2} --outdir 03_screened 2> {log}"
+    
 rule align:
     message: "Aligning bisfulite reads"
     input:
@@ -105,108 +105,146 @@ rule align:
     resources:
         mem_mb = 1024 * 125, # Last number is memory in GB
         time = 60 * 24 * 7, # Last number is days
-	account = "genome-center-grp",
-	partition = "high"
+        #account = "genome-center-grp", # Suggested account for LaSalle Lab
+        #partition = "high", # Suggested partition for LaSalle Lab
     shell: "bismark -n 1 --genome 01_genomes/{config[genome]}/ --multicore {threads} --dovetail --score_min L,0,-0.2 --gzip --unmapped -o 04_aligned/ -1 {input.r1} -2 {input.r2} 2> {log}"
 
+rule merge_lanes:
+    message: "Merging aligned data"
+    input: get_bam_files
+    output: temp("04_merged_aligned/{sample_id}_merged.bam")
+    log: "00_std_err_logs/04_merged_aligned_{sample_id}.txt"
+    benchmark: "00_time_logs/04_merged_aligned_{sample_id}.txt"
+    threads: 4
+    resources:
+        mem_mb = 1024 * 25, # Last number is memory in GB
+        time = 60 * 24 * 3, # Last number is days
+        #account = "publicgrp", # Suggested account for LaSalle Lab
+        #partition = "low", # Suggested partition for LaSalle Lab
+    shell: "samtools merge -n -@ {threads} {output} {input} 2> {log}"
+    
+rule name_sort:
+    message: "Sorting BAM files by read name"
+    input: "04_merged_aligned/{sample_id}_merged.bam"
+    output: temp("04_merged_aligned/{sample_id}_merged_name_sorted.bam")
+    log: "00_std_err_logs/04_name_sorted_{sample_id}.txt"
+    benchmark: "00_time_logs/04_name_sorted_{sample_id}.txt"
+    resources:
+        mem_mb = 1024 * 25, # Last number is memory in GB
+        time = 60 * 24 * 2, # Last number is days
+        #account = "publicgrp", # Suggested account for LaSalle Lab
+        #partition = "low", # Suggested partition for LaSalle Lab
+    shell: "samtools sort -n -@ {threads} -o {output} {input} 2> {log}"
+
 rule deduplicate:
-	message: "Removing PCR duplicates"
-	input: "04_aligned/{sample}_1_val_1_bismark_bt2_pe.bam"
-	output:
-		"05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam",
-		"05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplication_report.txt"
-	log: "00_std_err_logs/05_deduplicated_{sample}.txt"
-	benchmark: "00_time_logs/05_deduplicated_{sample}.txt"
-	resources:
-		mem_mb = 1024 * 15, # Last number is memory in GB
-		time = 60 * 24 * 2, # Last number is days
-	shell: """
-	deduplicate_bismark --bam --paired {input} 2> {log}
-	mv {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplicated.bam 05_deduplicated/
-	mv {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplication_report.txt 05_deduplicated/
-	"""
- 
+    message: "Removing PCR duplicates"
+    input: "04_merged_aligned/{sample_id}_merged_name_sorted.bam"
+    output:
+        out_bam = temp("05_deduplicated/{sample_id}_merged_name_sorted.deduplicated.bam"),
+        out_report = "05_deduplicated/{sample_id}_merged_name_sorted.deduplication_report.txt"
+    log: "00_std_err_logs/05_deduplicated_{sample_id}.txt"
+    benchmark: "00_time_logs/05_deduplicated_{sample_id}.txt"
+    resources:
+        mem_mb = 1024 * 25, # Last number is memory in GB
+        time = 60 * 24 * 2, # Last number is days
+        #account = "publicgrp", # Suggested account for LaSalle Lab
+        #partition = "low", # Suggested partition for LaSalle Lab
+    shell:
+        """
+        deduplicate_bismark --bam --paired {input} 2> {log}
+        mv {wildcards.sample_id}_merged_name_sorted.deduplicated.bam {output.out_bam}
+        mv {wildcards.sample_id}_merged_name_sorted.deduplication_report.txt {output.out_report}
+        """
+
 rule sort:
-	message: "Sorting BAM files"
-	input: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
-	output: "06_sorted/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam"
-	log: "00_std_err_logs/06_sorted_{sample}.txt"
-	benchmark: "00_time_logs/06_sorted_{sample}.txt"
-	resources:
-		mem_mb = 1024 * 15, # Last number is memory in GB
-		time = 60 * 24 * 2, # Last number is days
-	shell: "picard SortSam INPUT={input} OUTPUT={output} SORT_ORDER=coordinate 2> {log}"
+    message: "Sorting BAM files"
+    input: "05_deduplicated/{sample_id}_merged_name_sorted.deduplicated.bam"
+    output: temp("06_sorted/{sample_id}_merged_name_sorted.deduplicated.sorted.bam")
+    log: "00_std_err_logs/06_sorted_{sample_id}.txt"
+    benchmark: "00_time_logs/06_sorted_{sample_id}.txt"
+    resources:
+        mem_mb = 1024 * 25, # Last number is memory in GB
+        time = 60 * 24 * 2, # Last number is days
+        #account = "publicgrp", # Suggested account for LaSalle Lab
+        #partition = "low", # Suggested partition for LaSalle Lab
+    shell: "picard SortSam INPUT={input} OUTPUT={output} SORT_ORDER=coordinate 2> {log}"
 
 rule size_metrics:
-	message: "Collecting insert size metrics"
-	input: "06_sorted/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam"
-	output: 
-		ins = "07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.insert.txt",
-		hist = "07_size_metrics/{sample}_1_val_1_bismark_bt2_pe.deduplicated.sorted.bam.histogram.pdf"
-	log: "00_std_err_logs/07_size_metrics_{sample}.txt"
-	benchmark: "00_time_logs/07_size_metrics_{sample}.txt"
-	resources:
-		mem_mb = 1024 * 10, # Last number is memory in GB
-		time = 60 * 24 * 2, # Last number is days
-	shell: "picard CollectInsertSizeMetrics INPUT={input} OUTPUT={output.ins} HISTOGRAM_FILE={output.hist} ASSUME_SORTED=TRUE 2> {log}"
+    message: "Collecting insert size metrics"
+    input: "06_sorted/{sample_id}_merged_name_sorted.deduplicated.sorted.bam"
+    output: 
+        ins = "07_size_metrics/{sample_id}_merged_name_sorted.deduplicated.sorted.bam.insert.txt",
+        hist = "07_size_metrics/{sample_id}_merged_name_sorted.deduplicated.sorted.bam.histogram.pdf"
+    log: "00_std_err_logs/07_size_metrics_{sample_id}.txt"
+    benchmark: "00_time_logs/07_size_metrics_{sample_id}.txt"
+    resources:
+        mem_mb = 1024 * 25, # Last number is memory in GB
+        time = 60 * 24 * 1, # Last number is days
+        #account = "publicgrp", # Suggested account for LaSalle Lab
+        #partition = "low", # Suggested partition for LaSalle Lab
+    shell: "picard CollectInsertSizeMetrics INPUT={input} OUTPUT={output.ins} HISTOGRAM_FILE={output.hist} ASSUME_SORTED=TRUE 2> {log}"
 
 rule nucleotide_coverage:
-	message: "Assessing nucleotide coverage"
-	input: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
-	output: "06_nt_coverage/{sample}_1_val_1_bismark_bt2_pe.deduplicated.nucleotide_stats.txt"
-	log: "00_std_err_logs/06_nt_coverage_{sample}.txt"
-	benchmark: "00_time_logs/06_nt_coverage_{sample}.txt"
-	resources:
-		mem_mb = 1024 * 10, # Last number is memory in GB
-		time = 60 * 24 * 2, # Last number is days
-	shell: "bam2nuc --genome_folder 01_genomes/{config[genome]}/ {input} --dir 06_nt_coverage 2> {log}"
+    message: "Assessing nucleotide coverage"
+    input: "06_sorted/{sample_id}_merged_name_sorted.deduplicated.sorted.bam"
+    output: "06_nt_coverage/{sample_id}_merged_name_sorted.deduplicated.sorted.nucleotide_stats.txt"
+    log: "00_std_err_logs/06_nt_coverage_{sample_id}.txt"
+    benchmark: "00_time_logs/06_nt_coverage_{sample_id}.txt"
+    resources:
+        mem_mb = 1024 * 25, # Last number is memory in GB
+        time = 60 * 24 * 2, # Last number is days
+        #account = "publicgrp", # Suggested account for LaSalle Lab
+        #partition = "low", # Suggested partition for LaSalle Lab
+    shell: "bam2nuc --genome_folder 01_genomes/{config[genome]}/ {input} --dir 06_nt_coverage 2> {log}"
 
 rule extract_methylation:
-	message: "Extracting methylation"
-	input: "05_deduplicated/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bam"
-	output: 
-		"06_methylation/CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz",
-		"06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz",
-		"06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz",
-		"06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R1.png",
-		"06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias_R2.png",
-		"06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.M-bias.txt",
-		"06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated_splitting_report.txt",
-		"06_methylation/Non_CpG_context_{sample}_1_val_1_bismark_bt2_pe.deduplicated.txt.gz"
-	log: "00_std_err_logs/06_methylation_{sample}.txt"
-	benchmark: "00_time_logs/06_methylation_{sample}.txt"
-	resources:
-		mem_mb = 1024 * 50, # Last number is memory in GB
-		time = 60 * 24 * 3, # Last number is days
-	shell: "bismark_methylation_extractor --paired-end --gzip --comprehensive --merge_non_CpG --bedGraph --multicore 6 --buffer_size 34G {input} --output_dir 06_methylation/ 2> {log}"
-
+    message: "Extracting methylation"
+    input: "05_deduplicated/{sample_id}_merged_name_sorted.deduplicated.bam"
+    output: 
+        "06_methylation/CpG_context_{sample_id}_merged_name_sorted.deduplicated.txt.gz",
+        "06_methylation/{sample_id}_merged_name_sorted.deduplicated.bedGraph.gz",
+        "06_methylation/{sample_id}_merged_name_sorted.deduplicated.bismark.cov.gz",
+        "06_methylation/{sample_id}_merged_name_sorted.deduplicated.M-bias_R1.png",
+        "06_methylation/{sample_id}_merged_name_sorted.deduplicated.M-bias_R2.png",
+        "06_methylation/{sample_id}_merged_name_sorted.deduplicated.M-bias.txt",
+        "06_methylation/{sample_id}_merged_name_sorted.deduplicated_splitting_report.txt",
+        "06_methylation/Non_CpG_context_{sample_id}_merged_name_sorted.deduplicated.txt.gz"
+    log: "00_std_err_logs/06_methylation_{sample_id}.txt"
+    benchmark: "00_time_logs/06_methylation_{sample_id}.txt"
+    resources:
+        mem_mb = 1024 * 50, # Last number is memory in GB
+        time = 60 * 24 * 5, # Last number is days
+        #account = "lasallegrp", # Suggested account for LaSalle Lab
+        #partition = "high", # Suggested partition for LaSalle Lab
+    shell: "bismark_methylation_extractor --paired-end --gzip --comprehensive --merge_non_CpG --bedGraph --multicore 6 --buffer_size 34G {input} --output_dir 06_methylation/ 2> {log}"
+ 
 rule cytosine_reports:
-	message: "Generating genome-wide cytosine reports"
-	input:
-		"06_methylation/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz"
-	output: 
-		"08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz"
-	log: "00_std_err_logs/08_cytosine_reports_{sample}.txt"
-	benchmark: "00_time_logs/08_cytosine_reports_{sample}.txt"
-	resources:
-		mem_mb = 1024 * 50, # Last number is memory in GB
-		time = 60 * 24 * 3, # Last number is days
-	shell: "coverage2cytosine --dir 08_cytosine_reports --gzip --merge_CpG {input} --genome_folder 01_genomes/{config[genome]}/ --output {wildcards.sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz 2> {log}"
-	
+    message: "Generating genome-wide cytosine reports"
+    input:
+        "06_methylation/{sample_id}_merged_name_sorted.deduplicated.bismark.cov.gz"
+    output: 
+        "08_cytosine_reports/{sample_id}_merged_name_sorted.deduplicated.bismark.cov.gz.CpG_report.txt.gz"
+    log: "00_std_err_logs/08_cytosine_reports_{sample_id}.txt"
+    benchmark: "00_time_logs/08_cytosine_reports_{sample_id}.txt"
+    resources:
+        mem_mb = 1024 * 50, # Last number is memory in GB
+        time = 60 * 24 * 3, # Last number is days
+        #account = "genome-center-grp", # Suggested account for LaSalle Lab
+        #partition = "high", # Suggested partition for LaSalle Lab
+    shell: "coverage2cytosine --dir 08_cytosine_reports --gzip --merge_CpG {input} --genome_folder 01_genomes/{config[genome]}/ --output {wildcards.sample_id}_merged_name_sorted.deduplicated.bismark.cov.gz 2> {log}"
+  
 rule qc_report:
-	message: "Generating QC reports"
-	input: expand("08_cytosine_reports/{sample}_1_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz.CpG_report.txt.gz", sample=config["samples"])
-	output: 
-		out1 = "09_multiqc/multiqc_report.html",
-		out2 = directory("09_multiqc/multiqc_data/")
-	log: "00_std_err_logs/09_multiqc.txt"
-	benchmark: "00_time_logs/09_multiqc.txt"
-	resources:
-		mem_mb = 1024 * 25, # Last number is memory in GB
-		time = 60 * 24 * 2, # Last number is days
-	shell: 
-		"""
-		multiqc . --ignore raw_sequences --ignore 01_raw_sequences 2> {log}
-		mv multiqc_report.html {output.out1}
-		mv multiqc_data/ {output.out2}
-		"""
+    message: "Generating QC reports"
+    input: 
+        get_final_outputs()
+    output: 
+        "09_multiqc/multiqc_report.html"
+    log: "00_std_err_logs/09_multiqc.txt"
+    benchmark: "00_time_logs/09_multiqc.txt"
+    resources:
+        mem_mb = 1024 * 50, # Last number is memory in GB
+        time = 60 * 24 * 2, # Last number is days
+        #account = "lasallegrp", # Suggested account for LaSalle Lab
+        #partition = "high", # Suggested partition for LaSalle Lab
+    shell: "multiqc . --ignore raw_sequences --ignore 01_raw_sequences --outdir 09_multiqc/ 2> {log}"
+    
