@@ -147,8 +147,8 @@ rule deduplicate:
     resources:
         mem_mb = 1024 * 50, # Last number is memory in GB
         time = 60 * 24 * 2, # Last number is days
-        #account = "publicgrp", # Suggested account for LaSalle Lab
-        #partition = "low", # Suggested partition for LaSalle Lab
+        #account = "genome-center-grp", # Suggested account for LaSalle Lab
+        #partition = "high", # Suggested partition for LaSalle Lab
     shell:
         """
         deduplicate_bismark --bam --paired {input} 2> {log}
