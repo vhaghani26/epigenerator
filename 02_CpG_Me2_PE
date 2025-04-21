@@ -145,7 +145,7 @@ rule deduplicate:
     log: "00_std_err_logs/05_deduplicated_{sample_id}.txt"
     benchmark: "00_time_logs/05_deduplicated_{sample_id}.txt"
     resources:
-        mem_mb = 1024 * 25, # Last number is memory in GB
+        mem_mb = 1024 * 50, # Last number is memory in GB
         time = 60 * 24 * 2, # Last number is days
         #account = "publicgrp", # Suggested account for LaSalle Lab
         #partition = "low", # Suggested partition for LaSalle Lab
@@ -227,7 +227,7 @@ rule cytosine_reports:
     log: "00_std_err_logs/08_cytosine_reports_{sample_id}.txt"
     benchmark: "00_time_logs/08_cytosine_reports_{sample_id}.txt"
     resources:
-        mem_mb = 1024 * 50, # Last number is memory in GB
+        mem_mb = 1024 * 30, # Last number is memory in GB
         time = 60 * 24 * 3, # Last number is days
         #account = "genome-center-grp", # Suggested account for LaSalle Lab
         #partition = "high", # Suggested partition for LaSalle Lab
