@@ -134,17 +134,17 @@ sample_ids = []
 for file in raw_files:
     # Remove file extension and read direction
     if file.endswith("_1.fq.gz") or file.endswith("_2.fq.gz"):
-        file[:-8]
+        file = file[:-8]
     elif file.endswith("_1.fastq.gz") or file.endswith("_2.fastq.gz"):
-        file[:-11]
+        file = file[:-11]
     elif file.endswith("_R1.fq.gz") or file.endswith("_R2.fq.gz"):
-        file[:-9]
+        file = file[:-9]
     elif file.endswith("_R1.fastq.gz") or file.endswith("_R2.fastq.gz"):
-        file[:-12]
+        file = file[:-12]
     elif file.endswith("_R1_001.fq.gz") or file.endswith("_R2_001.fq.gz"):
-        file[:-13]    
+        file = file[:-13]    
     elif file.endswith("_R1_001.fastq.gz") or file.endswith("_R2_001.fastq.gz"):
-        file[:-16]
+        file = file[:-16]
     # Add sample ID
     sample_ids.append(file)
 
@@ -158,7 +158,7 @@ for samp in sample_ids:
 print("\n")
 
 samp_names = input("Please check the sample IDs above. This should include lane information if you have multiple lanes. Are they correct? (y/n) ")
-if samp_num.lower() == "no" or samp_num.lower() == "n":
+if samp_names.lower() == "no" or samp_names.lower() == "n":
     print("An error has occured. Please try entering your project metadata again.")
     sys.exit()  
 
@@ -192,15 +192,3 @@ with open(file, "a") as f:
 # Reset standard output
 sys.stdout = original_stdout
 print("task_samples.yaml has been created.")
-
-# Restructure dictionary to contain full file paths of files with same sample IDs
-files_per_samp = {}
-for samp in sample_ids:
-    files_per_samp[samp] = []
-    for key, value in raw_files.items():
-        if key.startswith(f'{samp}{samp_id_delim}'):                
-            files_per_samp[samp].append(value)
-
-# Save space
-del raw_files
-del sample_ids
